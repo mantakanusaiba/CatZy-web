@@ -24,8 +24,9 @@
             <img src="~/Content/image/product.png" alt="Product Management" />
             <h3>Product Management</h3>
             <p>Add, update, or remove items from the pet shop.</p>
-            <a href="#" class="btn">Manage Products →</a>
+            <a href="@Url.Action("Index", "Product")" class="btn">Manage Products →</a>
         </div>
+
         <!-- Rescuing Option -->
         <div class="admin-card">
             <img src="~/Content/image/rescue.png" alt="Rescue Option" />
@@ -37,7 +38,7 @@
         <!-- Adoption Listing -->
         <div class="admin-card">
             <img src="~/Content/image/adoption.png" alt="Adoption Listing" />
-            <h3>Adoption  Listings</h3>
+            <h3>Adoption Listings</h3>
             <p>View and manage pet adoption applications.</p>
             <a href="#" class="btn">View Listings →</a>
         </div>
@@ -49,21 +50,20 @@
             <p>Approve or reject vet registrations after verification.</p>
             <a href="#" class="btn">Review Credentials →</a>
         </div>
-
-
     </div>
 </div>
+
 @Html.Partial("_Footer")
 
-
 <style>
-    /* Admin Dashboard Styles */
+    /* General Layout */
     body {
         background-color: #f9d097;
         font-family: 'Comic Sans MS', cursive, sans-serif;
-        margin: 0px;
+        margin: 0;
     }
 
+    /* Navbar */
     .navbar {
         background-color: #644426;
         display: flex;
@@ -76,7 +76,6 @@
         left: 0;
         z-index: 1000;
     }
-
 
         .navbar .logo {
             font-size: 28px;
@@ -96,6 +95,7 @@
             font-weight: bold;
         }
 
+    /* Main Section */
     .admin-section {
         margin-top: 90px;
         padding: 50px;
@@ -112,6 +112,7 @@
             margin-bottom: 40px;
         }
 
+    /* Cards */
     .admin-cards {
         margin-top: 60px;
         display: flex;
@@ -124,12 +125,16 @@
         background-color: #fff1c1;
         border-radius: 15px;
         padding: 20px;
-        width: 45%; 
+        width: 45%;
         text-align: center;
         box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-        box-sizing: border-box; 
+        box-sizing: border-box;
+        transition: transform 0.2s ease;
     }
 
+        .admin-card:hover {
+            transform: translateY(-5px);
+        }
 
         .admin-card img {
             width: 80px;
@@ -138,6 +143,7 @@
 
         .admin-card h3 {
             color: #6b4b2e;
+            margin-bottom: 10px;
         }
 
         .admin-card p {
@@ -146,6 +152,7 @@
             margin-bottom: 20px;
         }
 
+    /* Buttons */
     .btn {
         background-color: #e5c185;
         padding: 8px 15px;
@@ -153,6 +160,8 @@
         text-decoration: none;
         color: #6b4b2e;
         font-weight: bold;
+        display: inline-block;
+        transition: background-color 0.2s ease;
     }
 
         .btn:hover {
