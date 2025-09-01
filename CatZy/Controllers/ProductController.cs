@@ -19,7 +19,8 @@ namespace Catzy.Controllers
     new Product { Id=5, Name="Flea Collar", Description="Protects from fleas and ticks", Price=600, Stock=35, Category="Accessories", Icon="collar.png" },
     new Product { Id=6, Name="Food Bowl", Description="Non-slip stainless steel", Price=500, Stock=45, Category="Pet Food", Icon="bowl.png" },
     new Product { Id=7, Name="Dry Cat Food", Description="Nutritious dry food ", Price=1200, Stock=60, Category="Pet Food", Icon="food.png" },
-    new Product { Id=8, Name="Canned Food", Description="Tasty canned food ", Price=950, Stock=40, Category="Pet Food", Icon="can.png" }
+    new Product { Id=8, Name="Canned Food", Description="Tasty canned food ", Price=950, Stock=40, Category="Pet Food", Icon="can.png" },
+     new Product { Id=9, Name="Pet Carrier", Description="Portable pet carrier ", Price=1550, Stock=20, Category="Accessories", Icon="carrier.png" }
 
 };
 
