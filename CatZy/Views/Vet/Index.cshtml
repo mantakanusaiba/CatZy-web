@@ -1,2 +1,294 @@
-<h2>Welcome Vet, @ViewBag.User</h2>
-<a href="/Account/Logout">Logout</a>
+@{
+    ViewData["Title"] = "Catzy - Doctor Dashboard";
+}
+
+
+<nav class="navbar">
+    <div class="logo">Catzy</div>
+    <ul class="nav-links">
+        <li><a href="/Vet/Index">Dashboard</a></li>
+        <li><a href="/Vet/Credentials">Credentials Form</a></li>
+        
+        <li><a href="/Vet/Appointment">Appointments</a></li>
+        
+        <li><a href="#">Patients</a></li>
+        <li><a href="#">Medical Records</a></li>
+        <li><a href="#">Messages</a></li>
+        <li><a href="/Account/Logout">Logout</a></li>
+    </ul>
+
+</nav>
+
+<div class="main-section">
+    <div class="content">
+        <h1>
+            Welcome Doctor, @ViewBag.User 👩‍⚕️
+        </h1>
+        <p>
+            Manage your appointments, patient history, and provide medical care through Catzy.
+            Stay connected with your patients anytime.
+        </p>
+        <div class="buttons">
+            <a href="#" class="btn">View Appointments</a>
+            <a href="#" class="btn">Manage Patients</a>
+        </div>
+    </div>
+    <div class="image">
+        <img src="~/Content/image/doctor.png" alt="Doctor Dashboard" />
+    </div>
+</div>
+
+
+<section class="services-section">
+    <h2>Doctor Tools</h2>
+    <div class="services-container">
+        <div class="service-card">
+            <img src="~/Content/image/appointment.png" alt="Appointments" />
+            <p>Appointments</p>
+        </div>
+        <div class="service-card">
+            <img src="~/Content/image/patients.png" alt="Patients" />
+            <p>Patients</p>
+        </div>
+        <div class="service-card">
+            <img src="~/Content/image/records.png" alt="Medical Records" />
+            <p>Medical Records</p>
+        </div>
+        <div class="service-card">
+            <img src="~/Content/image/message.png" alt="Messages" />
+            <p>Messages</p>
+        </div>
+    </div>
+</section>
+
+
+<section class="rescue-section">
+    <div class="rescue-container">
+        <div class="rescue-info">
+            <span class="tag">Reports</span>
+            <h3>Patient & Treatment Reports</h3>
+            <p>
+                Generate medical reports, update prescriptions, and track patient progress.
+                Keep all important medical records in one place.
+            </p>
+            <a href="#" class="browse-btn">Generate Report →</a>
+        </div>
+        <div class="rescue-grid">
+            <div class="rescue-card">
+                <img src="~/Content/image/records.png" alt="History" />
+                <p>History</p>
+            </div>
+            <div class="rescue-card">
+                <img src="~/Content/image/health.png" alt="Prescriptions" />
+                <p>Prescriptions</p>
+            </div>
+            <div class="rescue-card">
+                <img src="~/Content/image/care.png" alt="Treatment" />
+                <p>Treatment</p>
+            </div>
+            <div class="rescue-card">
+                <img src="~/Content/image/message.png" alt="Notes" />
+                <p>Notes</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<style>
+    body {
+        background-color: #ffd699;
+        font-family: 'Comic Sans MS', cursive, sans-serif;
+        margin: 0;
+    }
+
+  
+    .navbar {
+        background-color: #644426;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 14px 40px;
+        width: 100%;
+        position: fixed;
+        top: 0;
+        left: 0;
+        z-index: 1000;
+    }
+
+        .navbar .logo {
+            font-size: 28px;
+            color: white;
+            font-weight: bold;
+        }
+
+    .nav-links {
+        list-style: none;
+        display: flex;
+        gap: 25px;
+    }
+
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+   
+    .main-section {
+        margin-top: 90px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 50px;
+        background-color: #ffd699;
+    }
+
+        .main-section .content h1 {
+            font-size: 36px;
+            color: #6b4b2e;
+            margin-top: 20px;
+            margin-left: 40px;
+        }
+
+        .main-section .content p {
+            font-size: 16px;
+            color: #8a5e3c;
+            margin-top: 20px;
+            margin-left: 40px;
+            margin-bottom: 60px;
+        }
+
+        .main-section .buttons .btn {
+            background-color: #fff1c1;
+            padding: 10px 20px;
+            margin-left: 40px;
+            margin-right: 10px;
+            border-radius: 20px;
+            text-decoration: none;
+            color: #6b4b2e;
+            font-weight: bold;
+        }
+
+        .main-section img {
+            width: 350px;
+            border-radius: 5px;
+            margin-right: 70px;
+            margin-top: 40px;
+        }
+
+   
+    .services-section {
+        text-align: center;
+        padding: 70px 70px 0;
+        background-color: #ffd699;
+    }
+
+        .services-section h2 {
+            font-size: 32px;
+            color: #6b4b2e;
+            margin-top: 50px;
+        }
+
+    .services-container {
+        background-color: #e5c185;
+        margin-top: 50px;
+        padding: 50px;
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 20px;
+    }
+
+    .service-card {
+        background-color: #fff1c1;
+        padding: 20px;
+        border-radius: 10px;
+        text-align: center;
+    }
+
+        .service-card img {
+            width: 45px;
+            height: 45px;
+        }
+
+        .service-card p {
+            margin-top: 10px;
+            font-weight: bold;
+            color: #6b4b2e;
+        }
+
+   
+    .rescue-section {
+        text-align: center;
+        padding: 70px 70px 0;
+        background-color: #ffd699;
+    }
+
+    .rescue-container {
+        background-color: #e5c185;
+        margin-top: 35px;
+        padding: 60px;
+        display: flex;
+        justify-content: space-between;
+        gap: 30px;
+    }
+
+    .rescue-info {
+        flex: 1;
+        text-align: left;
+    }
+
+        .rescue-info .tag {
+            display: inline-block;
+            background-color: #fff1c1;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-weight: bold;
+            color: #6b4b2e;
+        }
+
+        .rescue-info h3 {
+            font-size: 28px;
+            margin: 15px 0;
+        }
+
+        .rescue-info p {
+            font-size: 16px;
+            color: #8a5e3c;
+            margin-bottom: 20px;
+        }
+
+    .browse-btn {
+        background-color: #fff1c1;
+        padding: 10px 15px;
+        border-radius: 20px;
+        color: #6b4b2e;
+        text-decoration: none;
+        font-weight: bold;
+    }
+
+    .rescue-grid {
+        flex: 1;
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 15px;
+    }
+
+    .rescue-card {
+        background-color: #fff1c1;
+        padding: 15px;
+        border-radius: 10px;
+        text-align: center;
+    }
+
+        .rescue-card img {
+            width: 45px;
+            height: 45px;
+            margin-bottom: 10px;
+        }
+
+        .rescue-card p {
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #6b4b2e;
+        }
+</style>
