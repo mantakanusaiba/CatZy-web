@@ -1,0 +1,31 @@
+@model IEnumerable<Catzy.Models.Appointment>
+
+@{
+    ViewData["Title"] = "All Appointments";
+}
+
+<h2>Appointments</h2>
+
+<table border="1" cellpadding="10" style="border-collapse:collapse; width:100%;">
+    <tr style="background-color:#ffd699;">
+        <th>Doctor</th>
+        <th>Specialization</th>
+        <th>Date</th>
+        <th>Time</th>
+        <th>Cat</th>
+        <th>Owner</th>
+        <th>Contact</th>
+    </tr>
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>@item.DoctorName</td>
+            <td>@item.Specialization</td>
+            <td>@item.Date.ToShortDateString()</td>
+            <td>@item.FromTime - @item.ToTime</td>
+            <td>@item.CatName (Age: @item.Age, Breed: @item.Breed)</td>
+            <td>@item.OwnerName</td>
+            <td>@item.Email, @item.Phone</td>
+        </tr>
+    }
+</table>
