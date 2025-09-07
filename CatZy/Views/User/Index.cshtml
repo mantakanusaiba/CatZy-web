@@ -8,7 +8,7 @@
     <ul class="nav-links">
         <li><a href="#">Home</a></li>
         <li><a href="#">Pet Shop</a></li>
-        <li><a href="#">Adoption</a></li>
+        <li><a href="@Url.Action("Adoption", "User")">Adoption</a></li>
         <li><a href="#">Vet Appointment</a></li>
         <li><a href="#">Pet Diary</a></li>
         <li><a href="#">About Us</a></li>
@@ -28,7 +28,7 @@
         </p>
         <div class="buttons">
             <a href="#" class="btn">Shop Now</a>
-            <a href="#" class="btn">Adopt a pet</a>
+            <a href="@Url.Action("Adoption", "User")" class="btn">Adopt a pet</a>
         </div>
     </div>
     <div class="image">
@@ -47,7 +47,7 @@
                 Discover premium food, toys, accessories, and more for your beloved pets.
                 We carefully select products that ensure their health and happiness.
             </p>
-            <a href="#" class="browse-btn">Browse Products →</a>
+            <a href="@Url.Action("Product", "User")" class="browse-btn">Browse Products →</a>
         </div>
         <div class="services-grid">
             <div class="service-card">
@@ -122,7 +122,7 @@
                 Give a loving home to pets in need. Our adoption process ensures
                 the perfect match between pets and their new families.
             </p>
-            <a href="#" class="view-pets-btn">View available pets →</a>
+            <a href="@Url.Action("Adoption", "User")" class="view-pets-btn">View available pets →</a>
         </div>
 
     </div>

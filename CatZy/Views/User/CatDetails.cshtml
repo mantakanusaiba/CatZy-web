@@ -1,0 +1,203 @@
+@model CatZy.Models.Cat
+
+<!-- Navbar -->
+<nav class="navbar">
+    <div class="logo">Catzy</div>
+    <ul class="nav-links">
+        <li><a href="@Url.Action("Index", "User")">Home</a></li>
+        <li><a href="#">Pet Shop</a></li>
+        <li><a href="@Url.Action("Adoption", "User")" class="active">Adoption</a></li>
+        <!-- views/user/catdetails.cshtml -->
+        <a href="@Url.Action("Adopt", "User", new { id = Model.Id })" class="adopt-btn">Adopt Me</a>
+
+        <li><a href="#">Vet Appointment</a></li>
+        <li><a href="#">Pet Diary</a></li>
+        <li><a href="#">About Us</a></li>
+        <li><a href="/Account/Logout">Logout</a></li>
+    </ul>
+</nav>
+
+<div class="cat-profile">
+    <div class="profile-header">
+        <span>🐾 Cat Profile</span>
+        <a href="@Url.Action("Adoption", "User")" class="back-btn">⬅ Back to Adoption</a>
+    </div>
+
+    <div class="profile-content">
+        <!-- Left Section -->
+        <div class="profile-left">
+            <div class="overview">
+                <h3>Overview</h3>
+                <p><strong>Name:</strong> @Model.Name</p>
+                <p><strong>Breed:</strong> @Model.Breed</p>
+                <p><strong>Gender:</strong> @Model.Gender</p>
+                <p><strong>Age:</strong> @Model.Age</p>
+                <p><strong>Color:</strong> @Model.Color</p>
+                <p><strong>Weight:</strong> @Model.Weight</p>
+            </div>
+
+            <div class="fun-facts">
+                <h3>Fun Facts</h3>
+                <p><strong>Favorite Toy:</strong> @Model.FavoriteToy</p>
+                <p><strong>Favorite Treat:</strong> @Model.FavoriteTreat</p>
+                <p><strong>Favorite Activity:</strong> @Model.FavoriteActivity</p>
+            </div>
+        </div>
+
+        <!-- Right Section -->
+        <div class="profile-right">
+            <img src="@Url.Content(Model.ImageUrl)" alt="@Model.Name" />
+            <h3>@Model.Name</h3>
+            <a href="@Url.Action("Adopt", "User", new { id = Model.Id })" class="adopt-btn">Adopt Me</a>
+        </div>
+    </div>
+</div>
+
+<style>
+    body {
+        background-color: #f9e4c8;
+        margin: 0;
+        font-family: 'Comic Sans MS', cursive, sans-serif;
+    }
+
+    /* ✅ Navbar */
+    .navbar {
+        background-color: #644426;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 14px 40px;
+        width: 100%;
+        position: fixed;
+        top: 0;
+        left: 0;
+        z-index: 1000;
+    }
+
+        .navbar .logo {
+            font-size: 28px;
+            color: white;
+            font-weight: bold;
+        }
+
+    .nav-links {
+        list-style: none;
+        display: flex;
+        gap: 25px;
+    }
+
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .nav-links .active {
+            text-decoration: underline;
+        }
+
+    .cat-profile {
+        background-color: #f9e4c8;
+        padding: 40px;
+        margin-top: 80px; /* To avoid navbar overlap */
+    }
+
+    .profile-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background-color: #f9e4c8;
+        padding: 15px 25px;
+        border-radius: 8px;
+        color: #644426;
+        font-size: 22px;
+        font-weight: bold;
+    }
+
+    .back-btn {
+        background-color: #644426;
+        color: white; /* ✅ Always white text */
+        padding: 8px 15px;
+        border-radius: 20px;
+        text-decoration: none;
+        font-weight: bold;
+        border: 2px solid #644426;
+        transition: all 0.3s ease;
+    }
+
+        .back-btn:hover {
+            background-color: #402d1e; /* Darker brown on hover */
+            color: white; /* ✅ Still white */
+        }
+
+
+    .profile-content {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 30px;
+        gap: 40px;
+    }
+
+    .profile-left {
+        width: 50%;
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    .overview, .fun-facts {
+        background-color: #fff7e6;
+        padding: 20px;
+        border-radius: 20px;
+    }
+
+        .overview h3, .fun-facts h3 {
+            color: #6b4b2e;
+            margin-bottom: 15px;
+            font-size: 20px;
+        }
+
+        .overview p, .fun-facts p {
+            color: #5c4033;
+            margin: 8px 0;
+            font-size: 16px;
+        }
+
+    .profile-right {
+        width: 40%;
+        text-align: center;
+    }
+
+        .profile-right img {
+            width: 280px;
+            height: 280px;
+            object-fit: cover;
+            border-radius: 50%;
+            border: 6px solid #fff3e0;
+            margin-bottom: 15px;
+        }
+
+        .profile-right h3 {
+            color: #6b4b2e;
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+
+    .adopt-btn {
+        background-color: #d8a55b;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 20px;
+        font-size: 16px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: background 0.3s ease;
+        text-decoration: none;
+        display: inline-block;
+    }
+
+        .adopt-btn:hover {
+            background-color: #b8853f;
+        }
+</style>

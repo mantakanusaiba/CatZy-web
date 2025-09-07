@@ -1,0 +1,73 @@
+@model CatZy.Models.Cat
+
+<h2>Adopt @Model.Name</h2>
+@using (Html.BeginForm("ConfirmAdoption", "User", FormMethod.Post))
+{
+    @Html.AntiForgeryToken()
+    @Html.Hidden("CatId", Model.Id)
+
+    <label>Your Name:</label>
+    <input type="text" name="FullName" required />
+
+    <label>Email:</label>
+    <input type="email" name="Email" required />
+
+    <label>Phone:</label>
+    <input type="text" name="Phone" required />
+
+    <label>Address:</label>
+    <textarea name="Address" rows="3" required></textarea>
+
+    <button type="submit" class="submit-btn">Confirm Adoption</button>
+}
+
+
+
+
+
+<style>
+    .adopt-form-container {
+        max-width: 500px;
+        margin: 100px auto;
+        background: #fff3e0;
+        padding: 20px;
+        border-radius: 12px;
+    }
+
+        .adopt-form-container h2 {
+            color: #644426;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+    form label {
+        display: block;
+        margin: 10px 0 5px;
+        font-weight: bold;
+    }
+
+    form input, form textarea {
+        width: 100%;
+        padding: 8px;
+        border-radius: 6px;
+        border: 1px solid #ccc;
+    }
+
+    .submit-btn {
+        background-color: #d8a55b;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 20px;
+        font-size: 16px;
+        font-weight: bold;
+        cursor: pointer;
+        margin-top: 15px;
+        display: block;
+        width: 100%;
+    }
+
+        .submit-btn:hover {
+            background-color: #b8853f;
+        }
+</style>
