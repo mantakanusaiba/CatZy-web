@@ -1,13 +1,40 @@
-﻿using CatZy.Models;
+
+using CatZy.Models;
 using System.Collections.Generic;
 using System.Web.Mvc;
 using System.Linq;
 using Catzy.Models;
 
+
 namespace Catzy.Controllers
 {
     public class UserController : Controller
     {
+        private AppDbContext db = new AppDbContext();
+
+        [HttpGet]
+        public ActionResult Appointment()
+        {
+            if (Session["Role"] == null || Session["Role"].ToString() != "User")
+                return RedirectToAction("Login", "Account");
+
+            return View(new Appointment());
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Appointment(Appointment model)
+        {
+            if (ModelState.IsValid)
+            {
+                db.Appointments.Add(model);
+                db.SaveChanges();
+                return RedirectToAction("Index");
+            }
+
+            return View(model);
+        }
+
         public ActionResult Index()
         {
             if (Session["Role"] == null || Session["Role"].ToString() != "User")
@@ -92,4 +119,5 @@ namespace Catzy.Controllers
             };
         } // [28]
     }
+        
 }

@@ -16,6 +16,7 @@ namespace CatZy
             FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             BundleConfig.RegisterBundles(BundleTable.Bundles);
+            System.Data.Entity.Database.SetInitializer<Catzy.Models.AppDbContext>(null);
         }
     }
 }
