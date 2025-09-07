@@ -1,0 +1,534 @@
+@model List<Catzy.Models.CartItem>
+@{
+    ViewData["Title"] = "Shopping Cart";
+    var subtotal = Model.Sum(i => i.Product.Price * i.Quantity);
+}
+<div class="cart-container">
+    <div class="cart-header">
+        <h2>Your Shopping Cart</h2>
+        <div class="cart-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#6b4b2e">
+                <path d="M7 18c-1.1 0-1.99.9-1.99 2S5.9 22 7 22s2-.9 2-2-.9-2-2-2zM1 2v2h2l3.6 7.59-1.35 2.45c-.16.28-.25.61-.25.96 0 1.1.9 2 2 2h12v-2H7.42c-.14 0-.25-.11-.25-.25l.03-.12.9-1.63h7.45c.75 0 1.41-.41 1.75-1.03l3.58-6.49c.08-.14.12-.31.12-.48 0-.55-.45-1-1-1H5.21l-.94-2H1zm16 16c-1.1 0-1.99.9-1.99 2s.89 2 1.99 2 2-.9 2-2-.9-2-2-2z" />
+            </svg>
+            <span class="cart-count">@Model.Count</span>
+        </div>
+    </div>
+
+    @if (Model.Count == 0)
+    {
+        <div class="empty-cart">
+            <div class="empty-cart-icon">🛒</div>
+            <p class="empty-msg">Your cart is empty 😿</p>
+            <p class="empty-subtext">Looks like you haven't added any items to your cart yet.</p>
+            <a href="@Url.Action("Index","Shop")" class="btn shop-btn">
+                <span>Continue Shopping</span>
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#6b4b2e">
+                    <path d="M7 18c-1.1 0-1.99.9-1.99 2S5.9 22 7 22s2-.9 2-2-.9-2-2-2zM1 2v2h2l3.6 7.59-1.35 2.45c-.16.28-.25.61-.25.96 0 1.1.9 2 2 2h12v-2H7.42c-.14 0-.25-.11-.25-.25l.03-.12.9-1.63h7.45c.75 0 1.41-.41 1.75-1.03l3.58-6.49c.08-.14.12-.31.12-.48 0-.55-.45-1-1-1H5.21l-.94-2H1zm16 16c-1.1 0-1.99.9-1.99 2s.89 2 1.99 2 2-.9 2-2-.9-2-2-2z" />
+                </svg>
+            </a>
+        </div>
+    }
+    else
+    {
+        <div class="cart-items">
+            <table class="cart-table">
+                <thead>
+                    <tr>
+                        <th>Product</th>
+                        <th>Price</th>
+                        <th>Quantity</th>
+                        <th>Total</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr class="cart-item">
+                            <td class="product-info">
+                                <a href="@Url.Action("Details","Shop", new { id = item.Product.Id })" class="product-link">
+                                    @item.Product.Name
+                                </a>
+                            </td>
+                            <td class="price">Tk @item.Product.Price</td>
+                            <td class="quantity">
+                                <div class="quantity-container">
+                                    <div class="quantity-controls">
+                                        <button type="button" class="qty-btn minus" data-id="@item.Product.Id">-</button>
+                                        <input type="number" name="quantity" value="@item.Quantity" min="1" class="qty-input" data-id="@item.Product.Id" />
+                                        <button type="button" class="qty-btn plus" data-id="@item.Product.Id">+</button>
+                                    </div>
+                                    <button type="button" class="update-btn" data-id="@item.Product.Id">Update</button>
+                                </div>
+                            </td>
+                            <td class="total">Tk @(item.Product.Price * item.Quantity)</td>
+                            <td class="actions">
+                                <button type="button" class="remove-btn" data-id="@item.Product.Id">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#6b4b2e">
+                                        <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z" />
+                                    </svg>
+                                </button>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+
+        <div class="cart-summary">
+            <div class="summary-row">
+                <span>Subtotal:</span>
+                <span class="amount">Tk @subtotal</span>
+            </div>
+            <div class="summary-row">
+                <span>Shipping:</span>
+                <span class="amount">Calculated at checkout</span>
+            </div>
+            <div class="summary-row total-row">
+                <span>Estimated Total:</span>
+                <span class="amount">Tk @subtotal</span>
+            </div>
+            <div class="cart-actions">
+                <a href="@Url.Action("Index","Shop")" class="back-btn">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#6b4b2e">
+                        <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z" />
+                    </svg>
+                    Continue Shopping
+                </a>
+                <a href="@Url.Action("Checkout","Shop")" class="btn checkout-btn">
+                    Proceed to Checkout
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#6b4b2e">
+                        <path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z" />
+                    </svg>
+                </a>
+            </div>
+        </div>
+    }
+</div>
+
+<style>
+    /* Base styles */
+    .cart-container {
+        padding: 40px 20px;
+        max-width: 1000px;
+        margin: 40px auto;
+        background: #ffffff;
+        border-radius: 20px;
+        box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+        overflow: hidden;
+    }
+
+    /* Cart header */
+    .cart-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0 30px 20px;
+        border-bottom: 1px solid #f0e6d2;
+    }
+
+    .cart-header h2 {
+        color: #6b4b2e;
+        font-size: 28px;
+        font-weight: 700;
+    }
+
+    .cart-icon {
+        position: relative;
+    }
+
+    .cart-count {
+        position: absolute;
+        top: -8px;
+        right: -8px;
+        background: #e5c185;
+        color: #6b4b2e;
+        font-size: 12px;
+        font-weight: bold;
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    /* Empty cart */
+    .empty-cart {
+        text-align: center;
+        padding: 60px 20px;
+    }
+
+    .empty-cart-icon {
+        font-size: 80px;
+        margin-bottom: 20px;
+        opacity: 0.7;
+    }
+
+    .empty-msg {
+        font-size: 24px;
+        color: #6b4b2e;
+        margin-bottom: 10px;
+    }
+
+    .empty-subtext {
+        color: #8a5e3c;
+        margin-bottom: 30px;
+    }
+
+    .shop-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .shop-btn svg {
+        width: 20px;
+        height: 20px;
+    }
+
+    /* Cart table */
+    .cart-items {
+        padding: 20px 30px;
+    }
+
+    .cart-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    .cart-table th {
+        text-align: left;
+        padding: 15px 10px;
+        color: #6b4b2e;
+        font-weight: 600;
+        border-bottom: 2px solid #f0e6d2;
+    }
+
+    .cart-item {
+        border-bottom: 1px solid #f0e6d2;
+        transition: background-color 0.2s;
+    }
+
+    .cart-item:hover {
+        background-color: #fff9eb;
+    }
+
+    .cart-table td {
+        padding: 20px 10px;
+        color: #6b4b2e;
+    }
+
+    .product-link {
+        color: #6b4b2e;
+        font-weight: 600;
+        text-decoration: none;
+        display: block;
+        transition: color 0.2s;
+    }
+
+    .product-link:hover {
+        color: #e5c185;
+    }
+
+    .price, .total {
+        font-weight: 500;
+    }
+
+    /* Quantity controls */
+    .quantity-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .quantity-controls {
+        display: flex;
+        align-items: center;
+        margin-bottom: 10px;
+    }
+
+    .qty-btn {
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        border: 1px solid #e5c185;
+        background-color: #fff;
+        color: #6b4b2e;
+        font-size: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+
+    .qty-btn:hover {
+        background-color: #e5c185;
+    }
+
+    .qty-input {
+        width: 50px;
+        height: 30px;
+        text-align: center;
+        border: 1px solid #e5c185;
+        border-radius: 0;
+        margin: 0 5px;
+        font-size: 16px;
+    }
+
+    .update-btn {
+        background: #e5c185;
+        border: none;
+        padding: 5px 12px;
+        border-radius: 15px;
+        cursor: pointer;
+        color: #6b4b2e;
+        font-weight: 500;
+        transition: all 0.2s;
+        width: 80px;
+    }
+
+    .update-btn:hover {
+        background: #d4aa6a;
+    }
+
+    .remove-btn {
+        background: transparent;
+        border: none;
+        cursor: pointer;
+        padding: 8px;
+        border-radius: 50%;
+        transition: all 0.2s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 36px;
+        height: 36px;
+    }
+
+    .remove-btn:hover {
+        background: rgba(244, 67, 54, 0.1);
+    }
+
+    .remove-btn svg {
+        width: 20px;
+        height: 20px;
+    }
+
+    /* Cart summary */
+    .cart-summary {
+        background: #fff9eb;
+        padding: 25px 30px;
+        border-top: 1px solid #f0e6d2;
+    }
+
+    .summary-row {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 12px;
+        color: #6b4b2e;
+    }
+
+    .total-row {
+        font-weight: 700;
+        font-size: 18px;
+        margin-top: 15px;
+        padding-top: 15px;
+        border-top: 1px dashed #e5c185;
+    }
+
+    .amount {
+        font-weight: 600;
+    }
+
+    .cart-actions {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 25px;
+    }
+
+    .btn {
+        background-color: #e5c185;
+        border: none;
+        padding: 12px 25px;
+        border-radius: 30px;
+        color: #6b4b2e;
+        font-weight: bold;
+        text-decoration: none;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 16px;
+        box-shadow: 0 4px 8px rgba(229, 193, 133, 0.3);
+    }
+
+    .btn:hover {
+        background-color: #d4aa6a;
+        transform: translateY(-2px);
+        box-shadow: 0 6px 12px rgba(229, 193, 133, 0.4);
+    }
+
+    .back-btn {
+        text-decoration: none;
+        background-color: transparent;
+        border: 1px solid #e5c185;
+        padding: 12px 20px;
+        border-radius: 30px;
+        color: #6b4b2e;
+        font-weight: bold;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .back-btn:hover {
+        background-color: #fff1c1;
+        transform: translateY(-2px);
+    }
+
+    .back-btn svg {
+        width: 18px;
+        height: 18px;
+    }
+
+    .checkout-btn svg {
+        width: 18px;
+        height: 18px;
+    }
+
+   
+
+        .cart-header {
+            padding: 0 10px 15px;
+        }
+
+        .cart-header h2 {
+            font-size: 24px;
+        }
+
+        .cart-items {
+            padding: 10px;
+        }
+
+        .cart-table {
+            font-size: 14px;
+        }
+
+        .cart-table th, .cart-table td {
+            padding: 10px 5px;
+        }
+
+        .cart-summary {
+            padding: 20px 15px;
+        }
+
+        .cart-actions {
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .btn, .back-btn {
+            width: 100%;
+            justify-content: center;
+        }
+    }
+</style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Quantity controls functionality
+        const minusButtons = document.querySelectorAll('.qty-btn.minus');
+        const plusButtons = document.querySelectorAll('.qty-btn.plus');
+        const updateButtons = document.querySelectorAll('.update-btn');
+        const removeButtons = document.querySelectorAll('.remove-btn');
+
+        // Handle minus button clicks
+        minusButtons.forEach(button => {
+            button.addEventListener('click', function () {
+                const productId = this.getAttribute('data-id');
+                const input = document.querySelector(`.qty-input[data-id="${productId}"]`);
+                let currentValue = parseInt(input.value);
+                if (currentValue > 1) {
+                    input.value = currentValue - 1;
+                }
+            });
+        });
+
+        // Handle plus button clicks
+        plusButtons.forEach(button => {
+            button.addEventListener('click', function () {
+                const productId = this.getAttribute('data-id');
+                const input = document.querySelector(`.qty-input[data-id="${productId}"]`);
+                let currentValue = parseInt(input.value);
+                input.value = currentValue + 1;
+            });
+        });
+
+        // Handle update button clicks
+        updateButtons.forEach(button => {
+            button.addEventListener('click', function () {
+                const productId = this.getAttribute('data-id');
+                const input = document.querySelector(`.qty-input[data-id="${productId}"]`);
+                const quantity = input.value;
+
+               
+                const formData = new FormData();
+                formData.append('productId', productId);
+                formData.append('quantity', quantity);
+
+               
+                fetch('/Shop/UpdateCart', {
+                    method: 'POST',
+                    body: formData
+                })
+                    .then(response => {
+                        if (response.ok) {
+                            
+                            window.location.reload();
+                        } else {
+                            alert('Error updating cart. Please try again.');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert('Error updating cart. Please try again.');
+                    });
+            });
+        });
+
+        // Handle remove button clicks
+        removeButtons.forEach(button => {
+            button.addEventListener('click', function () {
+                if (confirm('Are you sure you want to remove this item from your cart?')) {
+                    const productId = this.getAttribute('data-id');
+
+                   
+                    const formData = new FormData();
+                    formData.append('productId', productId);
+
+                    
+                    fetch('/Shop/RemoveFromCart', {
+                        method: 'POST',
+                        body: formData
+                    })
+                        .then(response => {
+                            if (response.ok) {
+                                
+                                window.location.reload();
+                            } else {
+                                alert('Error removing item. Please try again.');
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                            alert('Error removing item. Please try again.');
+                        });
+                }
+            });
+        });
+    });
+</script>
