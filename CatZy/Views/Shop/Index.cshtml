@@ -1,0 +1,236 @@
+@model IEnumerable<Catzy.Models.Product>
+@{
+    ViewBag.Title = "Catzy - Shop";
+}
+<!-- Navbar -->
+<nav class="navbar">
+    <div class="logo">CatZy</div>
+    <ul class="nav-links">
+        <li><a href="@Url.Action("Index", "Shop")" class="active">Products</a></li>
+        <li><a href="#">Adoption</a></li>
+        <li><a href="#">Doctors</a></li>
+        <li><a href="@Url.Action("Index", "User")" class="btn-back">Back</a></li>
+    </ul>
+</nav>
+
+<!-- Main Layout -->
+<div class="user-container">
+
+    <aside class="sidebar">
+        <ul>
+            <li><a href="@Url.Action("Index", "Shop")" class="@(ViewBag.SelectedCategory == null ? "active" : "")">📂 All Products</a></li>
+            <li><a href="@Url.Action("Index", "Shop", new { category = "Pet Food" })" class="@(ViewBag.SelectedCategory == "Pet Food" ? "active" : "")">🥩 Pet Food</a></li>
+            <li><a href="@Url.Action("Index", "Shop", new { category = "Toys" })" class="@(ViewBag.SelectedCategory == "Toys" ? "active" : "")">🧸 Toys</a></li>
+            <li><a href="@Url.Action("Index", "Shop", new { category = "Health Care" })" class="@(ViewBag.SelectedCategory == "Health Care" ? "active" : "")">❤️ Health Care</a></li>
+            <li><a href="@Url.Action("Index", "Shop", new { category = "Accessories" })" class="@(ViewBag.SelectedCategory == "Accessories" ? "active" : "")">⭐ Accessories</a></li>
+        </ul>
+    </aside>
+
+    <!-- Content Section -->
+    <main class="content">
+        <h1>@(ViewBag.SelectedCategory ?? "All Products")</h1>
+        <p>Showing @Model.Count() products</p>
+
+        <!-- Product Grid -->
+        <div class="product-grid">
+            @foreach (var item in Model)
+            {
+                <div class="product-card">
+                    <img src="~/Content/image/@item.Icon" alt="@item.Name" />
+                    <h3>@item.Name</h3>
+                    <p>@item.Description</p>
+                    <h4>Tk @item.Price</h4>
+                    <div class="card-buttons">
+                        <a href="@Url.Action("Details", "Shop", new { id = item.Id })" class="btn">
+                            View Details</a>
+                    </div>
+                </div>
+            }
+        </div>
+    </main>
+</div>
+
+<style>
+    body {
+        margin: 0;
+        font-family: 'Comic Sans MS', cursive, sans-serif;
+        background-color: #f9d097;
+    }
+
+    /* Navbar */
+    .navbar {
+        background-color: #644426;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 14px 40px;
+        width: 100%;
+        position: fixed;
+        top: 0;
+        left: 0;
+        z-index: 1000;
+    }
+
+        .navbar .logo {
+            font-size: 28px;
+            color: white;
+            font-weight: bold;
+        }
+
+    .nav-links {
+        list-style: none;
+        display: flex;
+        gap: 25px;
+        margin: 0;
+        padding: 0;
+    }
+
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+            transition: color 0.2s ease;
+        }
+
+            .nav-links a:hover, .nav-links a.active {
+                color: #f9d097;
+            }
+
+    /* Layout */
+    .user-container {
+        display: flex;
+        min-height: 100vh;
+    }
+
+    /* Sidebar */
+    .sidebar {
+        width: 260px;
+        background-color: #fff1c1;
+        padding: 25px;
+        border-right: 2px solid #e5c185;
+        position: fixed;
+        top: 70px;
+        left: 0;
+        bottom: 0;
+        overflow-y: auto;
+        margin-top: 0;
+    }
+
+        .sidebar ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+            .sidebar ul li {
+                margin-bottom: 15px;
+            }
+
+                .sidebar ul li a {
+                    text-decoration: none;
+                    display: block;
+                    color: #6b4b2e;
+                    font-weight: bold;
+                    padding: 12px 15px;
+                    border-radius: 5px;
+                    border: 2px solid #e5c185;
+                    transition: background-color 0.3s;
+                }
+
+                    .sidebar ul li a.active,
+                    .sidebar ul li a:hover {
+                        background-color: #e5c185;
+                    }
+
+    /* Main Content */
+    .content {
+        flex-grow: 1;
+        padding: 30px;
+        margin-left: 230px;
+        margin-top: 80px;
+    }
+
+        .content h1 {
+            color: #6b4b2e;
+            font-size: 26px;
+            margin: 0 0 10px 0;
+        }
+
+        .content p {
+            color: #8a5e3c;
+            margin: 0 0 15px 0;
+            font-size: 14px;
+        }
+
+    /* Product Grid */
+    .product-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 25px;
+    }
+
+    .product-card {
+        background-color: #fff1c1;
+        border-radius: 5px;
+        padding: 20px;
+        text-align: center;
+        box-shadow: 0px 4px 10px rgba(0,0,0,0.1);
+        position: relative;
+        transition: transform 0.2s;
+        flex-direction: column;
+        justify-content: space-between;
+        height: 320px;
+    }
+
+        .product-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .product-card img {
+            width: 100%;
+            height: 80px;
+            object-fit: contain;
+            margin-bottom: 15px;
+            margin-top: 18px;
+            padding: 8px;
+        }
+
+        .product-card h3 {
+            color: #6b4b2e;
+            margin: 0;
+            font-size: 18px;
+        }
+
+        .product-card p {
+            color: #8a5e3c;
+            font-size: 14px;
+            margin: 5px 0 15px;
+        }
+
+        .product-card h4 {
+            font-size: 18px;
+            color: #6b4b2e;
+            margin-bottom: 20px;
+        }
+
+    .card-buttons {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .btn {
+        background-color: #e5c185;
+        padding: 8px 12px;
+        border-radius: 12px;
+        text-decoration: none;
+        color: #6b4b2e;
+        font-weight: bold;
+        font-size: 14px;
+        transition: background-color 0.2s;
+    }
+
+        .btn:hover {
+            background-color: #dab078;
+        }
+</style>
