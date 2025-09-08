@@ -1,5 +1,6 @@
 @{
     ViewData["Title"] = "Catzy - User Dashboard";
+
 }
 
 <!-- Navbar -->
@@ -7,35 +8,55 @@
     <div class="logo">Catzy</div>
     <ul class="nav-links">
         <li><a href="#">Home</a></li>
-        <li><a href="#">Pet Shop</a></li>
-        <li><a href="@Url.Action("Adoption", "User")">Adoption</a></li>
+        <li><a href="@Url.Action("Index", "Shop")">Pet Shop</a></li>
+        <li><a href="#">Adoption</a></li>
+        <li><a href="@Url.Action("Report", "Rescue")">Rescue</a></li>
         <li><a href="#">Vet Appointment</a></li>
-        <li><a href="@Url.Action("PetDiary","User")">Pet Diary</a></li>
+        <li><a href="#">Pet Diary</a></li>
         <li><a href="#">About Us</a></li>
         <li><a href="/Account/Logout">Logout</a></li>
     </ul>
 </nav>
-
+<!-- Main Section -->
 <!-- Main Section -->
 <div class="main-section">
     <div class="content">
         <h1>
-            Welcome to Catzy , @ViewBag.User</h2>
+            Welcome to Catzy, @ViewBag.User
         </h1>
         <p>
             Your one-stop destination for all pet care needs. <br />
             Shop for quality products, adopt a furry friend, or book a vet appointment.
         </p>
         <div class="buttons">
-            <a href="#" class="btn">Shop Now</a>
-            <a href="@Url.Action("Adoption", "User")" class="btn">Adopt a pet</a>
+            <a href="@Url.Action("Index", "Shop")" class="btn">Shop Now</a>
+            <a href="#" class="btn">Adopt a pet</a>
         </div>
     </div>
-    <div class="image">
-        <img src="~/Content/image/cat.jpg" alt="Cute cat" />
-    </div>
-</div>
 
+    <!-- Image Gallery -->
+    <div class="image-gallery">
+        <div class="gallery-item">
+            <img src="~/Content/image/cat.jpg" alt="Cute cat" />
+            <div class="image-overlay">
+                <span>Happy Cats</span>
+            </div>
+        </div>
+        <div class="gallery-item">
+            <img src="~/Content/image/cat7.jpg" alt="Whiskers" />
+            <div class="image-overlay">
+                <span>Playful Friends</span>
+            </div>
+        </div>
+        <div class="gallery-item">
+            <img src="~/Content/image/cat3.jpg" alt="Larry" />
+            <div class="image-overlay">
+                <span>Adorable Companions</span>
+            </div>
+        </div>
+    </div>
+
+</div>
 <!-- Our Services Section -->
 <section class="services-section">
     <h2>Our Services</h2>
@@ -47,7 +68,7 @@
                 Discover premium food, toys, accessories, and more for your beloved pets.
                 We carefully select products that ensure their health and happiness.
             </p>
-            <a href="@Url.Action("Product", "User")" class="browse-btn">Browse Products →</a>
+            <a href="@Url.Action("Index", "Shop")" class="browse-btn">Browse Products →</a>
         </div>
         <div class="services-grid">
             <div class="service-card">
@@ -69,7 +90,6 @@
         </div>
     </div>
 </section>
-
 <!-- Vet Appointment Section -->
 <section class="vet-appointment-section">
     <div class="vet-appointment-container">
@@ -83,7 +103,6 @@
             </p>
             <a href="#" class="book-btn">Book an Appointment →</a>
         </div>
-
         <!-- Right Column -->
         <div class="vet-services">
             <h3>Available Services</h3>
@@ -113,7 +132,6 @@
             <p>1 year old, tabby</p>
             <p>Playful, friendly</p>
         </div>
-
         <!-- Adoption Info -->
         <div class="adoption-info">
             <span class="tag">Adoption</span>
@@ -122,11 +140,9 @@
                 Give a loving home to pets in need. Our adoption process ensures
                 the perfect match between pets and their new families.
             </p>
-            <a href="@Url.Action("Adoption", "User")" class="view-pets-btn">View available pets →</a>
+            <a href="#" class="view-pets-btn">View available pets →</a>
         </div>
-
     </div>
-
 </section>
 <!-- Rescue Section -->
 <section class="rescue-section">
@@ -139,7 +155,7 @@
                 Our team provides shelter, food, and medical care to help pets recover
                 and find their forever homes.
             </p>
-            <a href="#" class="browse-btn">Report →</a>
+            <a href="@Url.Action("Report", "Rescue")" class="browse-btn">Report →</a>
         </div>
         <div class="rescue-grid">
             <div class="rescue-card">
@@ -162,7 +178,6 @@
     </div>
 </section>
 
-
 <!-- Pet Diary Section -->
 <section class="diary-section">
     <div class="diary-container">
@@ -176,26 +191,28 @@
             </p>
             <a href="#" class="browse-btn">Explore Pet Diary →</a>
         </div>
-
         <!-- Right Column -->
         <div class="diary-texts">
             <ul>
-                <li>🐾 Save your cat’s cutest moments.</li>
-                <li>🐾 Keep an eye on health updates.</li>
-                <li>🐾 Note birthdays, milestones, and visits.</li>
-                <li>🐾 Write about daily activities or special moments.</li>
+                <li>Save your cat’s cutest moments.</li>
+                <li>Keep an eye on health updates.</li>
+                <li>Note birthdays, milestones, and visits.</li>
+                <li>Write about daily activities or special moments.</li>
             </ul>
         </div>
     </div>
 </section>
 
 
-<style>
+@Html.Partial("_Footer")
 
+
+<style>
     body {
         background-color: #ffd699;
         font-family: 'Comic Sans MS', cursive, sans-serif;
         margin: 0;
+        transition: opacity 0.5s ease;
     }
 
     /* Navbar */
@@ -210,13 +227,19 @@
         top: 0;
         left: 0;
         z-index: 1000;
+        transition: transform 0.3s ease;
     }
 
         .navbar .logo {
             font-size: 28px;
             color: white;
             font-weight: bold;
+            transition: transform 0.3s ease;
         }
+
+            .navbar .logo:hover {
+                transform: scale(1.05);
+            }
 
     .nav-links {
         list-style: none;
@@ -228,50 +251,29 @@
             color: white;
             text-decoration: none;
             font-weight: bold;
+            position: relative;
+            transition: color 0.3s ease;
         }
 
-    /* Main Section */
-    .main-section {
-        margin-top: 90px;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 50px;
-        background-color: #ffd699;
-    }
+            .nav-links a:hover {
+                color: #ffd699;
+            }
 
-        .main-section .content h1 {
-            font-size: 36px;
-            color: #6b4b2e;
-            margin-top: 20px;
-            margin-left: 40px;
-        }
+            .nav-links a::after {
+                content: '';
+                position: absolute;
+                width: 0;
+                height: 2px;
+                background-color: #ffd699;
+                bottom: -5px;
+                left: 0;
+                transition: width 0.3s ease;
+            }
 
-        .main-section .content p {
-            font-size: 16px;
-            color: #8a5e3c;
-            margin-top: 20px;
-            margin-left: 40px;
-            margin-bottom: 60px;
-        }
+            .nav-links a:hover::after {
+                width: 100%;
+            }
 
-        .main-section .buttons .btn {
-            background-color: #fff1c1;
-            padding: 10px 20px;
-            margin-left: 40px;
-            margin-right: 10px;
-            border-radius: 20px;
-            text-decoration: none;
-            color: #6b4b2e;
-            font-weight: bold;
-        }
-
-        .main-section img {
-            width: 350px;
-            border-radius: 5px;
-            margin-right: 70px;
-            margin-top: 40px;
-        }
 
     /* Services Section */
     .services-section {
@@ -280,12 +282,28 @@
         background-color: #ffd699;
     }
 
-
         .services-section h2 {
             font-size: 32px;
             color: #6b4b2e;
             margin-top: 50px;
+            position: relative;
+            display: inline-block;
         }
+
+            .services-section h2::after {
+                content: '';
+                position: absolute;
+                width: 50%;
+                height: 3px;
+                background-color: #6b4b2e;
+                bottom: -10px;
+                left: 25%;
+                transition: width 0.5s ease;
+            }
+
+            .services-section h2:hover::after {
+                width: 70%;
+            }
 
     .services-container {
         background-color: #e5c185;
@@ -294,7 +312,14 @@
         display: flex;
         justify-content: space-between;
         gap: 30px;
+        border-radius: 10px;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
     }
+
+        .services-container:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
 
     .services-info {
         flex: 1;
@@ -308,7 +333,12 @@
             border-radius: 20px;
             font-weight: bold;
             color: #6b4b2e;
+            transition: transform 0.3s ease;
         }
+
+            .services-info .tag:hover {
+                transform: scale(1.05);
+            }
 
         .services-info h3 {
             font-size: 28px;
@@ -328,7 +358,14 @@
         color: #6b4b2e;
         text-decoration: none;
         font-weight: bold;
+        display: inline-block;
+        transition: all 0.3s ease;
     }
+
+        .browse-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
 
     .services-grid {
         flex: 1;
@@ -342,11 +379,22 @@
         padding: 15px;
         border-radius: 10px;
         text-align: center;
+        transition: all 0.3s ease;
     }
+
+        .service-card:hover {
+            transform: translateY(-5px) scale(1.03);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
 
         .service-card img {
             width: 40px;
             height: 40px;
+            transition: transform 0.3s ease;
+        }
+
+        .service-card:hover img {
+            transform: rotate(10deg) scale(1.2);
         }
 
         .service-card p {
@@ -354,6 +402,7 @@
             font-weight: bold;
             color: #6b4b2e;
         }
+
     /* Vet Appointment Section */
     .vet-appointment-section {
         text-align: center;
@@ -364,8 +413,24 @@
         .vet-appointment-section h2 {
             font-size: 32px;
             color: #6b4b2e;
+            position: relative;
+            display: inline-block;
         }
 
+            .vet-appointment-section h2::after {
+                content: '';
+                position: absolute;
+                width: 50%;
+                height: 3px;
+                background-color: #6b4b2e;
+                bottom: -10px;
+                left: 25%;
+                transition: width 0.5s ease;
+            }
+
+            .vet-appointment-section h2:hover::after {
+                width: 70%;
+            }
 
     .vet-appointment-container {
         background-color: #e5c185;
@@ -374,7 +439,14 @@
         display: flex;
         justify-content: space-between;
         gap: 30px;
+        border-radius: 10px;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
     }
+
+        .vet-appointment-container:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
 
     /* Left column */
     .vet-info {
@@ -389,7 +461,12 @@
             border-radius: 20px;
             font-weight: bold;
             color: #6b4b2e;
+            transition: transform 0.3s ease;
         }
+
+            .vet-info .tag:hover {
+                transform: scale(1.05);
+            }
 
         .vet-info h3 {
             font-size: 28px;
@@ -409,7 +486,14 @@
         color: #6b4b2e;
         text-decoration: none;
         font-weight: bold;
+        display: inline-block;
+        transition: all 0.3s ease;
     }
+
+        .book-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
 
     /* Right column */
     .vet-services {
@@ -418,7 +502,12 @@
         padding: 20px;
         border-radius: 10px;
         text-align: left;
+        transition: all 0.3s ease;
     }
+
+        .vet-services:hover {
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
 
         .vet-services h3 {
             color: #6b4b2e;
@@ -438,12 +527,22 @@
             border-bottom: 1px solid #dab078;
             color: #6b4b2e;
             font-weight: bold;
+            transition: all 0.3s ease;
+            position: relative;
+            padding-left: 25px;
         }
 
             .vet-services li::before {
                 content: "✔ ";
                 color: blueviolet;
                 font-weight: bold;
+                position: absolute;
+                left: 0;
+            }
+
+            .vet-services li:hover {
+                padding-left: 30px;
+                background-color: #ffe6b3;
             }
 
     /* Adoption Section */
@@ -456,7 +555,24 @@
         .adoption-section h2 {
             font-size: 32px;
             color: #6b4b2e;
+            position: relative;
+            display: inline-block;
         }
+
+            .adoption-section h2::after {
+                content: '';
+                position: absolute;
+                width: 50%;
+                height: 3px;
+                background-color: #6b4b2e;
+                bottom: -10px;
+                left: 25%;
+                transition: width 0.5s ease;
+            }
+
+            .adoption-section h2:hover::after {
+                width: 70%;
+            }
 
     .adoption-container {
         display: flex;
@@ -466,7 +582,14 @@
         padding: 40px;
         gap: 20px;
         margin-top: 20px;
+        border-radius: 10px;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
     }
+
+        .adoption-container:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
 
     .pet-card {
         background-color: white;
@@ -475,13 +598,42 @@
         padding: 12px;
         text-align: center;
         margin-right: 20px;
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
     }
+
+        .pet-card:hover {
+            transform: translateY(-10px) scale(1.03);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.15);
+        }
+
+        .pet-card::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: linear-gradient(90deg, #6b4b2e, #8a5e3c);
+            transform: translateX(-100%);
+            transition: transform 0.5s ease;
+        }
+
+        .pet-card:hover::after {
+            transform: translateX(0);
+        }
 
         .pet-card img {
             width: 100%;
             height: 150px;
             object-fit: cover;
             border-radius: 10px;
+            transition: transform 0.3s ease;
+        }
+
+        .pet-card:hover img {
+            transform: scale(1.1);
         }
 
         .pet-card h4 {
@@ -500,7 +652,6 @@
         max-width: 300px;
     }
 
-
         .adoption-info .tag {
             display: inline-block;
             background-color: #fff1c1;
@@ -508,7 +659,12 @@
             border-radius: 20px;
             font-weight: bold;
             color: #6b4b2e;
+            transition: transform 0.3s ease;
         }
+
+            .adoption-info .tag:hover {
+                transform: scale(1.05);
+            }
 
         .adoption-info h3 {
             font-size: 28px;
@@ -528,7 +684,14 @@
         color: #6b4b2e;
         text-decoration: none;
         font-weight: bold;
+        display: inline-block;
+        transition: all 0.3s ease;
     }
+
+        .view-pets-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
 
     /* Rescue Section */
     .rescue-section {
@@ -541,7 +704,24 @@
             font-size: 32px;
             color: #6b4b2e;
             margin-top: 50px;
+            position: relative;
+            display: inline-block;
         }
+
+            .rescue-section h2::after {
+                content: '';
+                position: absolute;
+                width: 50%;
+                height: 3px;
+                background-color: #6b4b2e;
+                bottom: -10px;
+                left: 25%;
+                transition: width 0.5s ease;
+            }
+
+            .rescue-section h2:hover::after {
+                width: 70%;
+            }
 
     .rescue-container {
         background-color: #e5c185;
@@ -550,7 +730,14 @@
         display: flex;
         justify-content: space-between;
         gap: 30px;
+        border-radius: 10px;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
     }
+
+        .rescue-container:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
 
     .rescue-info {
         flex: 1;
@@ -564,7 +751,12 @@
             border-radius: 20px;
             font-weight: bold;
             color: #6b4b2e;
+            transition: transform 0.3s ease;
         }
+
+            .rescue-info .tag:hover {
+                transform: scale(1.05);
+            }
 
         .rescue-info h3 {
             font-size: 28px;
@@ -584,7 +776,14 @@
         color: #6b4b2e;
         text-decoration: none;
         font-weight: bold;
+        display: inline-block;
+        transition: all 0.3s ease;
     }
+
+        .browse-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
 
     .rescue-grid {
         flex: 1;
@@ -598,12 +797,23 @@
         padding: 15px;
         border-radius: 10px;
         text-align: center;
+        transition: all 0.3s ease;
     }
+
+        .rescue-card:hover {
+            transform: translateY(-5px) scale(1.03);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
 
         .rescue-card img {
             width: 45px;
             height: 45px;
             margin-bottom: 10px;
+            transition: transform 0.3s ease;
+        }
+
+        .rescue-card:hover img {
+            transform: rotate(15deg) scale(1.2);
         }
 
         .rescue-card p {
@@ -611,6 +821,7 @@
             font-weight: bold;
             color: #6b4b2e;
         }
+
     /* Pet Diary Section */
     .diary-section {
         text-align: center;
@@ -625,7 +836,14 @@
         display: flex;
         justify-content: space-between;
         gap: 30px;
+        border-radius: 10px;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
     }
+
+        .diary-container:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
 
     /* Left Column */
     .diary-info {
@@ -640,7 +858,12 @@
             border-radius: 20px;
             font-weight: bold;
             color: #6b4b2e;
+            transition: transform 0.3s ease;
         }
+
+            .diary-info .tag:hover {
+                transform: scale(1.05);
+            }
 
         .diary-info h3 {
             font-size: 28px;
@@ -660,16 +883,27 @@
         color: #6b4b2e;
         text-decoration: none;
         font-weight: bold;
+        display: inline-block;
+        transition: all 0.3s ease;
     }
 
-    
+        .browse-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
     .diary-texts {
         flex: 1;
         background-color: #fff1c1;
         padding: 20px;
         border-radius: 10px;
         text-align: left;
+        transition: all 0.3s ease;
     }
+
+        .diary-texts:hover {
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
 
         .diary-texts ul {
             list-style: none;
@@ -683,13 +917,205 @@
             color: #6b4b2e;
             font-weight: bold;
             font-size: 16px;
+            transition: all 0.3s ease;
+            position: relative;
+            padding-left: 30px;
         }
 
-          
+            .diary-texts li::before {
+                content: "🐾";
+                position: absolute;
+                left: 0;
+                transition: transform 0.3s ease;
+            }
 
-    
+            .diary-texts li:hover {
+                padding-left: 35px;
+                background-color: #ffe6b3;
+            }
+
+                .diary-texts li:hover::before {
+                    transform: scale(1.2);
+                }
+
+
+    /* Main Section */
+
+
+
+    .main-section {
+        margin-top: 90px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 50px;
+        background-color: #ffd699;
+        position: relative;
+        overflow: hidden;
+        transition: transform 0.3s ease;
+    }
+
+        .main-section:hover {
+            transform: translateY(-5px);
+        }
+
+        .main-section .content {
+            text-align: center;
+            max-width: 800px;
+            transition: transform 0.3s ease;
+            z-index: 2;
+        }
+
+            .main-section .content:hover {
+                transform: scale(1.02);
+            }
+
+            .main-section .content h1 {
+                font-size: 36px;
+                color: #6b4b2e;
+                margin-top: 20px;
+                opacity: 0;
+                transform: translateY(-20px);
+                transition: opacity 0.8s ease, transform 0.8s ease;
+            }
+
+            .main-section .content p {
+                font-size: 16px;
+                color: #8a5e3c;
+                margin-top: 20px;
+                margin-bottom: 30px;
+                opacity: 0;
+                transform: translateY(20px);
+                transition: opacity 0.8s ease, transform 0.8s ease;
+            }
+
+        .main-section .buttons .btn {
+            background-color: #fff1c1;
+            padding: 12px 25px;
+            margin: 0 10px;
+            border-radius: 25px;
+            text-decoration: none;
+            color: #6b4b2e;
+            font-weight: bold;
+            display: inline-block;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            opacity: 0;
+            transform: scale(0.8);
+        }
+
+            .main-section .buttons .btn:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 8px 15px rgba(0,0,0,0.1);
+                background-color: #ffe6b3;
+            }
+
+
+        .main-section.loaded .content h1,
+        .main-section.loaded .content p,
+        .main-section.loaded .buttons .btn {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+
+    /* Image Gallery */
+    .image-gallery {
+        display: flex;
+        justify-content: center;
+        gap: 20px;
+        margin: 30px 0;
+        opacity: 0;
+        transform: translateY(40px);
+        transition: opacity 1s ease, transform 1s ease;
+    }
+
+    .main-section.loaded .image-gallery {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    .gallery-item {
+        position: relative;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        transition: all 0.4s ease;
+        transform: scale(0.9);
+    }
+
+    .main-section.loaded .gallery-item {
+        transform: scale(1);
+    }
+
+    .gallery-item:hover {
+        transform: translateY(-10px) scale(1.05);
+        box-shadow: 0 15px 30px rgba(0,0,0,0.15);
+    }
+
+    .gallery-item img {
+        width: 250px;
+        height: 180px;
+        object-fit: cover;
+        transition: transform 0.5s ease;
+    }
+
+    .gallery-item:hover img {
+        transform: scale(1.1);
+    }
+
+    .image-overlay {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background-color: rgba(255, 255, 255, 0.8);
+        padding: 10px;
+        text-align: center;
+        font-weight: bold;
+        color: #6b4b2e;
+        transform: translateY(100%);
+        transition: transform 0.3s ease;
+    }
+
+    .gallery-item:hover .image-overlay {
+        transform: translateY(0);
+    }
+
+    s
+
+    .main-section.loaded .paw-print,
+    .main-section.loaded .cat-icon {
+        opacity: 0.7;
+        transform: translate(0, 0) rotate(0deg);
+    }
+
+    .main-section:hover .paw-print:nth-child(1) {
+        transform: translate(-10px, -10px) rotate(-5deg);
+    }
+
+    .main-section:hover .paw-print:nth-child(2) {
+        transform: translate(10px, 10px) rotate(5deg);
+    }
+
+    .main-section:hover .cat-icon:nth-child(3) {
+        transform: translate(-8px, 8px) rotate(3deg);
+    }
+
+    .main-section:hover .paw-print:nth-child(4) {
+        transform: translate(8px, -8px) rotate(-3deg);
+    }
+
+    .main-section:hover .cat-icon:nth-child(5) {
+        transform: translate(0, -10px) rotate(2deg);
+    }
 </style>
 
 
+<script>
 
+    window.addEventListener('load', function () {
+        document.querySelector('.main-section').classList.add('loaded');
+    });
+</script>
 

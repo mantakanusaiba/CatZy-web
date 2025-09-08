@@ -1,0 +1,165 @@
+<!-- Footer -->
+<footer class="footer" role="contentinfo">
+    <div class="footer-content">
+        <div class="footer-section">
+            <h3>About CatZy</h3>
+            <p>Your one-stop platform for cat adoption, pet supplies, and veterinary care services.</p>
+        </div>
+
+        <div class="footer-section">
+            <h3>Quick Links</h3>
+            <ul>
+                <li><a href="#">Home</a></li>
+                <li><a href="#">Adoption Center</a></li>
+                <li><a href="#">Pet Shop</a></li>
+                <li><a href="#">Veterinary Services</a></li>
+                <li><a href="#">Contact Us</a></li>
+            </ul>
+        </div>
+
+        <div class="footer-section">
+            <h3>Contact Information</h3>
+            <p>Email: catzy@gmail.com</p>
+            <p>Phone: 0123456789</p>
+            <p>Address: 123 Street, abc City</p>
+        </div>
+
+        <div class="footer-section">
+            <h3>Follow Us</h3>
+            <div class="social-icons">
+                <a href="#" class="social-icon" aria-label="Follow on Facebook" title="Facebook">
+                     <img src="~/Content/image/facebook.png" alt="Facebook">
+                </a>
+                <a href="#" class="social-icon" aria-label="Follow on Instagram" title="Instagram">
+                   <img src="~/Content/image/instagram.png"  alt="Instagram">
+                </a>
+                <a href="#" class="social-icon" aria-label="Follow on X (Twitter)" title="X (Twitter)">
+                    <img src="~/Content/image/twitter.png"  alt="X (Twitter)">
+                </a>
+
+            </div>
+        </div>
+    </div>
+
+    <div class="footer-bottom">
+        <p>&copy; 2025 CatZy. All rights reserved.</p>
+    </div>
+</footer>
+
+<style>  html, body {
+        margin: 0;
+        padding: 0;
+    }
+    
+
+    .footer {
+        background-color: #644426;
+        margin-top: 120px;
+        width: 100vw; 
+        position: relative;
+        left: 50%;
+        right: 50%;
+        margin-left: -50vw; 
+        margin-right: -50vw; 
+        padding: 40px 20px 20px; 
+    }
+
+
+    
+    .footer-content {
+        display: flex;
+        flex-wrap: wrap; 
+        gap: 24px; 
+        justify-content: space-between;
+        margin: 0 auto;
+        max-width: 100%; 
+    }
+
+   
+    .footer-section {
+        flex: 1 1 240px; 
+        min-width: 200px; 
+    }
+
+        .footer-section h3 {
+            color: #fff1c1;
+            font-size: 20px;
+
+        }
+
+        .footer-section p, .footer-section li {
+            color: #fff1c1;
+            font-size: 14px;
+            line-height: 1.6;
+            margin: 0;
+        }
+
+        .footer-section ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+            .footer-section ul li {
+                margin-bottom: 8px;
+            }
+
+        .footer-section a {
+            color: #fff1c1;
+            text-decoration: none;
+        }
+
+            .footer-section a:hover, .footer-section a:focus-visible {
+                text-decoration: underline;
+                outline: none;
+            }
+
+    .social-icons {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        margin-top: 10px;
+    }
+
+    .social-icon {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 44px;
+        height: 44px;
+        background-color: #f9d097;
+        color: #644426;
+        border-radius: 50%;
+        text-decoration: none;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+        transition: transform .15s ease, box-shadow .2s ease, background-color .2s ease;
+    }
+
+        .social-icon:hover {
+            background-color: #e5c185;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 16px rgba(0,0,0,0.18);
+        }
+
+        .social-icon:focus-visible {
+            outline: 2px solid #ffdd00; 
+            outline-offset: 2px;
+        }
+
+        .social-icon img {
+            display: block;
+            width: 24px;
+            height: 24px;
+        }
+
+    .footer-bottom {
+        text-align: center;
+        margin-top: 30px;
+        padding-top: 20px;
+        border-top: 1px solid #8a5e3c;
+        color: #e5c185;
+        font-size: 14px;
+        
+        
+    }
+</style>
