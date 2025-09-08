@@ -1,31 +1,142 @@
-<h2>Doctor Credentials Approval</h2>
-<table border="1" cellpadding="10">
-    <tr>
-        <th>Name</th>
-        <th>Email</th>
-        <th>Phone</th>
-        <th>Specialization</th>
-        <th>Experience</th>
-        <th>Certificates</th>
-        <th>Profile Picture</th>
-        <th>Status</th>
-        <th>Action</th>
-    </tr>
-    @foreach (var doc in Model)
-    {
-        <tr>
-            <td>@doc.Name</td>
-            <td>@doc.Email</td>
-            <td>@doc.Phone</td>
-            <td>@doc.Specialization</td>
-            <td>@doc.Experience</td>
-            <td><a href="@doc.Certificates" target="_blank">View</a></td>
-            <td><img src="@doc.ProfilePic" width="80" /></td>
-            <td>@doc.Status</td>
-            <td>
-                <a href="@Url.Action("ApproveDoctor", "Admin", new { id = doc.Id })">Approve</a> |
-                <a href="@Url.Action("RejectDoctor", "Admin", new { id = doc.Id })">Reject</a>
-            </td>
-        </tr>
-    }
-</table>
+@model IEnumerable<Catzy.Models.DoctorCredential>
+
+@{
+    ViewBag.Title = "Doctor Credential Approvals";
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewBag.Title</title>
+    <style>
+        body {
+            font-family: 'Comic Sans MS', cursive;
+            background-color: #ffcc99;
+            margin: 0;
+            padding: 0;
+        }
+
+        .header {
+            background-color: #5b3c1d;
+            color: #fff3d4;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+            .header .logo {
+                font-size: 22px;
+                font-weight: bold;
+            }
+
+            .header .back-btn {
+                background: #fff3d4;
+                color: #5b3c1d;
+                border: none;
+                border-radius: 20px;
+                padding: 5px 15px;
+                cursor: pointer;
+            }
+
+        .container {
+            padding: 20px;
+        }
+
+        h2 {
+            color: #5b3c1d;
+            margin-bottom: 10px;
+        }
+
+        p.subtitle {
+            color: #7a4a2e;
+            margin-bottom: 30px;
+        }
+
+        .card {
+            background: #fff6cc;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+        }
+
+            .card h3 {
+                color: #5b3c1d;
+                margin-bottom: 5px;
+            }
+
+            .card p {
+                color: #7a4a2e;
+                margin: 4px 0;
+            }
+
+        .actions {
+            margin-top: 15px;
+        }
+
+        .btn-approve {
+            background: #66cc66;
+            color: white;
+            padding: 6px 14px;
+            border: none;
+            border-radius: 6px;
+            text-decoration: none;
+            margin-right: 10px;
+        }
+
+        .btn-reject {
+            background: #ff3333;
+            color: white;
+            padding: 6px 14px;
+            border: none;
+            border-radius: 6px;
+            text-decoration: none;
+        }
+
+        .view-link {
+            display: inline-block;
+            margin-top: 5px;
+            font-size: 14px;
+            color: #5b3c1d;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+            .view-link:hover {
+                text-decoration: underline;
+            }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="logo">Catzy</div>
+        <button class="back-btn" onclick="window.location.href='/Admin/Index'">Back</button>
+    </div>
+
+    <div class="container">
+        <h2>Doctor Credential Approvals</h2>
+        <p class="subtitle">Review and approve veterinarian applications</p>
+
+        @foreach (var doc in Model)
+        {
+            <div class="card">
+                <h3>Dr. @doc.Name</h3>
+                <p>@doc.Specialization</p>
+               
+                <p><b>Experience:</b> @doc.Experience years</p>
+                <p><b>Email:</b> @doc.Email | <b>Phone:</b> @doc.Phone</p>
+                <p>
+                    <b>Certificate:</b> <a href="@doc.Certificates" target="_blank" class="view-link">View Full Credentials →</a>
+                </p>
+                <div class="actions">
+                    <a href="@Url.Action("ApproveDoctor", "Admin", new { id = doc.Id })" class="btn-approve">Approve</a>
+                    <a href="@Url.Action("RejectDoctor", "Admin", new { id = doc.Id })" class="btn-reject">Reject</a>
+                </div>
+            </div>
+        }
+    </div>
+</body>
+</html>

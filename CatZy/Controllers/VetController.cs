@@ -13,10 +13,15 @@ namespace Catzy.Controllers
     {
         private AppDbContext db = new AppDbContext();
 
-        public ActionResult Credentials()
-        {
-            return View(); 
-        }
+         public ActionResult Credentials()
+ {
+     if (Session["Role"] == null || Session["Role"].ToString() != "Vet")
+     {
+         return RedirectToAction("Login", "Account");
+     }
+
+     return View();
+ }
 
         [HttpPost]
         public ActionResult Credentials(DoctorCredential model, HttpPostedFileBase Certificates, HttpPostedFileBase ProfilePic)
