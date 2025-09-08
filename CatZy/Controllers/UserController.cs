@@ -82,6 +82,14 @@ namespace Catzy.Controllers
             // Option 2: Absolute path (uncomment to bypass discovery completely)
             // return View("~/Views/User/Adopt.cshtml", cat);
         } // [28][23]
+        public ActionResult PetDiary()
+{
+    if (Session["Role"] == null || Session["Role"].ToString() != "User")
+        return RedirectToAction("Login", "Account");
+    ViewBag.User = Session["Username"];
+    return View("PetDiary");
+}
+
 
         [HttpPost]
         [ValidateAntiForgeryToken]

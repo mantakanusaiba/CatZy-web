@@ -1,0 +1,347 @@
+@{
+    ViewBag.Title = "Catzy - Pet Diary";
+}
+
+<nav class="navbar">
+    <div class="logo">Catzy</div>
+    <ul class="nav-links">
+        <li><a href="@Url.Action("Index","User")">Home</a></li>
+        <li><a href="#">Pet Shop</a></li>
+        <li><a href="@Url.Action("Adoption","User")">Adoption</a></li>
+        <li><a href="#">Vet Appointment</a></li>
+        <li><a class="active" href="@Url.Action("PetDiary","User")">Pet Diary</a></li>
+        <li><a href="#">About Us</a></li>
+        <li><a href="/Account/Logout">Logout</a></li>
+    </ul>
+</nav>
+
+<div class="page">
+    <header class="page-head">
+        <h1>Pet Diary</h1>
+        <p class="muted">Upload adorable photos, write journals or funny moments, and track health & vaccinations.</p>
+    </header>
+
+    <!-- Photos -->
+    <section class="panel">
+        <div class="panel-head">
+            <h2>Photo Gallery</h2>
+            <label class="btn file-btn">
+                + Upload Photos
+                <input id="photoInput" type="file" accept="image/*" multiple />
+            </label>
+        </div>
+        <div id="photoGrid" class="photo-grid"></div>
+    </section>
+
+    <!-- Journal -->
+    <section class="panel">
+        <div class="panel-head">
+            <h2>Journal & Funny Moments</h2>
+        </div>
+
+        <form id="journalForm" class="journal-form" onsubmit="return false;">
+            <div class="form-row">
+                <div>
+                    <label>Date</label>
+                    <input type="date" id="jDate" required />
+                </div>
+                <div>
+                    <label>Title</label>
+                    <input type="text" id="jTitle" placeholder="Playtime with yarn..." required />
+                </div>
+            </div>
+            <label>Entry</label>
+            <textarea id="jText" rows="4" placeholder="Write today’s memories or funny moments..." required></textarea>
+            <button id="addEntryBtn" class="btn primary">Add Entry</button>
+        </form>
+
+        <div id="journalList" class="journal-list"></div>
+    </section>
+
+    <!-- Health tracker -->
+    <section class="panel">
+        <div class="panel-head">
+            <h2>Health & Vaccination</h2>
+        </div>
+
+        <form class="health-form" onsubmit="return false;">
+            <div class="grid-2">
+                <div class="box">
+                    <h3>Vaccination</h3>
+                    <div class="row">
+                        <div>
+                            <label>Last vaccination date</label>
+                            <input type="date" id="lastVac" />
+                        </div>
+                        <div>
+                            <label>Next vaccination date</label>
+                            <input type="date" id="nextVac" />
+                        </div>
+                    </div>
+                    <div class="status-line">
+                        <span id="vacStatus" class="badge">—</span>
+                        <span id="vacDelta" class="muted small">Pick dates to see status</span>
+                    </div>
+                </div>
+
+                <div class="box">
+                    <h3>General Health</h3>
+                    <div class="row">
+                        <div>
+                            <label>Current weight (kg)</label>
+                            <input type="number" step="0.1" min="0" id="weight" placeholder="e.g., 3.8" />
+                        </div>
+                        <div>
+                            <label>Last vet visit</label>
+                            <input type="date" id="lastVet" />
+                        </div>
+                    </div>
+                    <label>Notes</label>
+                    <textarea id="healthNotes" rows="3" placeholder="Diet changes, behavior notes, medications…"></textarea>
+                </div>
+            </div>
+        </form>
+    </section>
+</div>
+
+<style>
+:root{
+    --bg:#ffd699; --card:#fff3e0; --ink:#5b4636; --brand:#644426; --accent:#e5c185;
+    --muted:#8a5e3c; --ok:#1f7a2f; --okbg:#d2f6d7; --warn:#8a5e3c; --warnbg:#ffe6b3;
+}
+*{box-sizing:border-box} html,body{height:100%}
+body{margin:0;background:var(--bg);font-family:"Segoe UI",Tahoma,Verdana,sans-serif;color:var(--ink)}
+.navbar{background:#644426;color:#fff;display:flex;justify-content:space-between;align-items:center;padding:12px 28px;position:fixed;top:0;left:0;right:0;z-index:10}
+.navbar .logo{font-weight:800}
+.nav-links{list-style:none;display:flex;gap:22px;margin:0;padding:0}
+.nav-links a{color:#fff;text-decoration:none;font-weight:700}
+.nav-links .active{text-decoration:underline}
+
+.page{margin-top:84px;padding:22px}
+.page-head h1{margin:0 0 4px;color:#6b4b2e}
+.muted{color:var(--muted)}
+.small{font-size:12px}
+
+.panel{background:var(--card);border:1px solid #f0d7aa;border-radius:14px;padding:16px;margin:14px 0}
+.panel-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.panel h2{color:#6b4b2e;margin:0}
+
+.btn{background:#e5c185;color:#6b4b2e;border:none;border-radius:18px;padding:8px 12px;font-weight:800;cursor:pointer;text-decoration:none}
+.btn.primary{background:#d8a55b;color:#fff}
+.file-btn{position:relative;overflow:hidden}
+.file-btn input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer}
+
+.photo-grid{display:grid;grid-template-columns:repeat(4,minmax(140px,1fr));gap:12px}
+.thumb{position:relative;border-radius:10px;overflow:hidden;background:#fff;border:1px solid #f0d7aa}
+.thumb img{width:100%;height:140px;object-fit:cover;display:block}
+.thumb .del{position:absolute;top:6px;right:6px;background:#d66969;color:#fff;border:none;border-radius:12px;padding:2px 8px;font-size:12px;cursor:pointer}
+
+.journal-form .form-row{display:grid;grid-template-columns:1fr 2fr;gap:10px}
+.journal-form input,.journal-form textarea{width:100%;padding:10px;border:2px solid var(--accent);border-radius:8px;background:#fff}
+.journal-list{margin-top:10px;display:grid;grid-template-columns:1fr;gap:10px}
+.entry{background:#fff;border:1px solid #f0d7aa;border-radius:10px;padding:12px}
+.entry h4{margin:0 0 6px;color:#6b4b2e}
+.entry .meta{color:#8a5e3c;font-size:12px;margin-bottom:6px}
+.entry .actions{display:flex;gap:8px;margin-top:8px}
+.entry .actions .btn{padding:6px 10px}
+
+.health-form .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.box{background:#fff;border:1px solid #f0d7aa;border-radius:10px;padding:12px}
+.box h3{margin:0 0 8px;color:#6b4b2e}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:8px}
+.box input, .box textarea, .box select{width:100%;padding:10px;border:2px solid var(--accent);border-radius:8px;background:#fff}
+
+.badge{display:inline-block;padding:6px 10px;border-radius:999px;font-weight:800}
+.badge.ok{background:var(--okbg);color:var(--ok)}
+.badge.warn{background:var(--warnbg);color:var(--warn)}
+.status-line{display:flex;gap:10px;align-items:center}
+
+@@media (max-width: 900px){
+  .photo-grid{grid-template-columns:repeat(3,minmax(120px,1fr))}
+  .health-form .grid-2{grid-template-columns:1fr}
+  .row{grid-template-columns:1fr}
+}
+@@media (max-width: 600px){
+  .photo-grid{grid-template-columns:repeat(2,minmax(110px,1fr))}
+  .journal-form .form-row{grid-template-columns:1fr}
+}
+</style>
+
+<script>
+    // --- simple storage helpers ---
+    const store = {
+        get: (k, def) => {
+            try { const v = localStorage.getItem(k); return v ? JSON.parse(v) : def; } catch (e) { return def; }
+        },
+        set: (k, v) => localStorage.setItem(k, JSON.stringify(v)),
+        del: (k) => localStorage.removeItem(k)
+    };
+
+    // Keys
+    const K = {
+        photos: 'catzy.diary.photos',         // array of {name, dataUrl}
+        journal: 'catzy.diary.journal',       // array of {date,title,text,ts}
+        health: 'catzy.diary.health'          // object {lastVac,nextVac,weight,lastVet,healthNotes}
+    };
+</script>
+
+<script>
+    // ---------- Photo gallery (persisted with Data URLs) ----------
+    (function () {
+        const input = document.getElementById('photoInput');
+        const grid = document.getElementById('photoGrid');
+        let items = store.get(K.photos, []); // [{name,dataUrl}]
+
+        function render() {
+            grid.innerHTML = "";
+            items.forEach((it, idx) => {
+                const wrap = document.createElement('div');
+                wrap.className = 'thumb';
+                const img = document.createElement('img');
+                img.src = it.dataUrl;
+                const del = document.createElement('button');
+                del.className = 'del';
+                del.textContent = 'Remove';
+                del.onclick = () => { items.splice(idx, 1); store.set(K.photos, items); render(); };
+                wrap.appendChild(img); wrap.appendChild(del);
+                grid.appendChild(wrap);
+            });
+        }
+
+        async function filesToDataUrls(fileList) {
+            const maxCount = 16; // basic guard
+            for (let f of fileList) {
+                if (!f.type.startsWith('image/')) continue;
+                if (items.length >= maxCount) break;
+                await new Promise((res, rej) => {
+                    const reader = new FileReader();
+                    reader.onload = e => { items.push({ name: f.name, dataUrl: e.target.result }); res(); };
+                    reader.onerror = rej;
+                    reader.readAsDataURL(f); // Data URL for localStorage persistence
+                });
+            }
+            store.set(K.photos, items);
+        }
+
+        if (input) {
+            input.addEventListener('change', async function () {
+                if (!this.files || !this.files.length) return;
+                await filesToDataUrls(this.files);
+                render();
+                this.value = "";
+            });
+        }
+
+        render();
+    })();
+</script>
+
+<script>
+    // ---------- Journal (persisted) ----------
+    (function () {
+        const jForm = document.getElementById('journalForm');
+        const jDate = document.getElementById('jDate');
+        const jTitle = document.getElementById('jTitle');
+        const jText = document.getElementById('jText');
+        const list = document.getElementById('journalList');
+        const btn = document.getElementById('addEntryBtn');
+
+        let entries = store.get(K.journal, []); // persisted
+
+        function render() {
+            list.innerHTML = "";
+            entries
+                .sort((a, b) => b.ts - a.ts)
+                .forEach((e, i) => {
+                    const card = document.createElement('div');
+                    card.className = 'entry';
+                    const h = document.createElement('h4'); h.textContent = e.title;
+                    const meta = document.createElement('div'); meta.className = 'meta'; meta.textContent = e.date;
+                    const p = document.createElement('p'); p.textContent = e.text;
+
+                    const actions = document.createElement('div'); actions.className = 'actions';
+                    const del = document.createElement('button'); del.className = 'btn danger'; del.textContent = 'Delete';
+                    del.onclick = () => { entries.splice(i, 1); store.set(K.journal, entries); render(); };
+
+                    actions.appendChild(del);
+                    card.appendChild(h); card.appendChild(meta); card.appendChild(p); card.appendChild(actions);
+                    list.appendChild(card);
+                });
+        }
+
+        btn.addEventListener('click', function () {
+            if (!jDate.value || !jTitle.value.trim() || !jText.value.trim()) return;
+            entries.push({
+                date: new Date(jDate.value).toLocaleDateString(),
+                title: jTitle.value.trim(),
+                text: jText.value.trim(),
+                ts: Date.now()
+            });
+            store.set(K.journal, entries);
+            jForm.reset();
+            render();
+        });
+
+        render();
+    })();
+</script>
+
+<script>
+    // ---------- Health & Vaccination (persisted) ----------
+    (function () {
+        const last = document.getElementById('lastVac');
+        const next = document.getElementById('nextVac');
+        const weight = document.getElementById('weight');
+        const lastVet = document.getElementById('lastVet');
+        const notes = document.getElementById('healthNotes');
+        const badge = document.getElementById('vacStatus');
+        const delta = document.getElementById('vacDelta');
+
+        let data = store.get(K.health, { lastVac: "", nextVac: "", weight: "", lastVet: "", healthNotes: "" });
+
+        // hydrate fields
+        last.value = data.lastVac || "";
+        next.value = data.nextVac || "";
+        weight.value = data.weight || "";
+        lastVet.value = data.lastVet || "";
+        notes.value = data.healthNotes || "";
+
+        function save() {
+            data = {
+                lastVac: last.value,
+                nextVac: next.value,
+                weight: weight.value,
+                lastVet: lastVet.value,
+                healthNotes: notes.value
+            };
+            store.set(K.health, data); // persists across reloads
+        }
+
+        function computeStatus() {
+            const nextVal = next.value ? new Date(next.value) : null;
+            if (!nextVal) {
+                badge.textContent = '—'; badge.className = 'badge';
+                delta.textContent = 'Pick dates to see status'; return;
+            }
+            const today = new Date();
+            nextVal.setHours(0, 0, 0, 0); today.setHours(0, 0, 0, 0);
+            const days = Math.round((nextVal - today) / 86400000);
+            if (days <= 0) {
+                badge.textContent = 'Completed';
+                badge.className = 'badge ok';
+                delta.textContent = 'Next vaccination date reached';
+            } else {
+                badge.textContent = 'Due';
+                badge.className = 'badge warn';
+                delta.textContent = days + ' day(s) remaining';
+            }
+        }
+
+        [last, next, weight, lastVet, notes].forEach(el => {
+            el.addEventListener('input', () => { save(); if (el === next) computeStatus(); });
+            el.addEventListener('change', () => { save(); if (el === next || el === last) computeStatus(); });
+        });
+
+        computeStatus(); // initial
+    })();
+</script>
