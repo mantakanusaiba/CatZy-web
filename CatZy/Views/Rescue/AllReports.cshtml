@@ -1,0 +1,110 @@
+@model IEnumerable<Catzy.Models.RescueRequest>
+@{
+    ViewBag.Title = "All Rescue Requests";
+}
+
+<h2 style="text-align: center; color: #6b4b2e; margin-bottom: 30px; margin-top: 50px; font-family: 'Comic Sans MS', cursive, sans-serif;">All Rescue Requests</h2>
+
+@if (!Model.Any())
+{
+    <p style="text-align:center; color:#8a5e3c; padding:20px; background-color:#fff3e0; border-radius:10px;">
+        No rescue requests submitted yet.
+    </p>
+}
+else
+{
+    <div id="map" style="height: 500px; width: 100%; margin-bottom: 20px; border: 3px solid #e5c185; border-radius: 10px; font-family: 'Comic Sans MS', cursive, sans-serif;"></div>
+
+    <div style="overflow-x: auto; padding: 10px; border-radius: 10px; background-color: #fff9f0; font-family: 'Comic Sans MS', cursive, sans-serif;">
+        <table class="table table-bordered" style="background-color: #ffffff; color: #6b4b2e; font-family: 'Comic Sans MS', cursive, sans-serif;">
+            <thead style="background-color: #e5c185; color: #6b4b2e; font-family: 'Comic Sans MS', cursive, sans-serif;">
+                <tr>
+                    <th>ID</th>
+                    <th>Cat Description</th>
+                    <th>Location Notes</th>
+                    <th>Latitude</th>
+                    <th>Longitude</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var req in Model)
+                {
+                    <tr style="background-color:#fff9f0;">
+                        <td>@req.Id</td>
+                        <td>@req.CatDescription</td>
+                        <td>@req.LocationDescription</td>
+                        <td>@req.Latitude</td>
+                        <td>@req.Longitude</td>
+                        <td>
+                            <button class="btn btn-primary" style="background-color: #e5c185; border: none; color: #6b4b2e; padding: 6px 12px; border-radius: 8px; font-family: 'Comic Sans MS', cursive, sans-serif;"
+                                    onclick="focusLocation(@req.Latitude, @req.Longitude)">
+                                View Location
+                            </button>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
+
+<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
+<script>
+    // Initialize map
+    var map = L.map('map').setView([23.8103, 90.4125], 12);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© OpenStreetMap'
+    }).addTo(map);
+
+    var defaultIcon = L.icon({
+        iconUrl: 'https://maps.google.com/mapfiles/ms/icons/blue-dot.png',
+        iconSize: [32, 32],
+        iconAnchor: [16, 32]
+    });
+
+    var highlightIcon = L.icon({
+        iconUrl: 'https://maps.google.com/mapfiles/ms/icons/red-dot.png',
+        iconSize: [32, 32],
+        iconAnchor: [16, 32]
+    });
+
+    var markers = [];
+    var rescueRequests = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model));
+
+    if (rescueRequests.length > 0) {
+        rescueRequests.forEach(function (req) {
+            var lat = parseFloat(req.Latitude);
+            var lng = parseFloat(req.Longitude);
+            if (!isNaN(lat) && !isNaN(lng)) {
+                var marker = L.marker([lat, lng], { icon: defaultIcon }).addTo(map);
+                marker.bindPopup(
+                    "<b>Cat Description:</b> " + (req.CatDescription || '') + "<br/>" +
+                    "<b>Location Notes:</b> " + (req.LocationDescription || '') + "<br/>" +
+                    "<b>Lat:</b> " + lat + " <b>Lng:</b> " + lng
+                );
+                markers.push({ marker: marker, lat: lat, lng: lng });
+            }
+        });
+
+        var group = new L.featureGroup(markers.map(m => m.marker));
+        map.fitBounds(group.getBounds(), { padding: [40, 40] });
+    }
+
+    function focusLocation(lat, lng) {
+        lat = parseFloat(lat);
+        lng = parseFloat(lng);
+        var EPS = 0.00001;
+        var found = markers.find(m => Math.abs(m.lat - lat) < EPS && Math.abs(m.lng - lng) < EPS);
+        if (found) {
+            map.setView([lat, lng], 16);
+            found.marker.openPopup();
+            found.marker.setIcon(highlightIcon);
+            setTimeout(function () {
+                found.marker.setIcon(defaultIcon);
+            }, 2000);
+        }
+    }
+</script>

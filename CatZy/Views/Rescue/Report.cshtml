@@ -1,0 +1,177 @@
+@model Catzy.Models.RescueRequest
+@{
+    ViewBag.Title = "Report Rescue Case";
+}
+<div class="rescue-container">
+    <div class="rescue-card">
+        <h2>Report a Cat Rescue</h2>
+        @if (TempData["SuccessMessage"] != null)
+        {
+            <div class="alert alert-success">@TempData["SuccessMessage"]</div>
+        }
+        @using (Html.BeginForm("Report", "Rescue", FormMethod.Post))
+        {
+            @Html.AntiForgeryToken()
+            <div>
+                @Html.LabelFor(m => m.CatDescription, "Cat Description")
+                @Html.TextBoxFor(m => m.CatDescription, new { @class = "form-control", placeholder = "E.g. Injured tabby near park" })
+            </div>
+            <div>
+                @Html.LabelFor(m => m.LocationDescription, "Location Notes")
+                @Html.TextBoxFor(m => m.LocationDescription, new { @class = "form-control", placeholder = "E.g. Near City Park Gate 2" })
+            </div>
+            <div>
+                <label>Select Location on Map</label>
+                <div id="map" style="height:400px; width:100%; margin-bottom:15px;"></div>
+                @Html.HiddenFor(m => m.Latitude, new { id = "Latitude" })
+                @Html.HiddenFor(m => m.Longitude, new { id = "Longitude" })
+            </div>
+            <button type="submit" class="btn btn-success">Submit Rescue Request</button>
+        }
+    </div>
+</div>
+
+<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+<script>
+    var map = L.map('map').setView([23.8103, 90.4125], 12);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© OpenStreetMap'
+    }).addTo(map);
+    var marker = L.marker([23.8103, 90.4125], { draggable: true }).addTo(map);
+    function updatePosition(latlng) {
+        document.getElementById("Latitude").value = latlng.lat;
+        document.getElementById("Longitude").value = latlng.lng;
+    }
+    map.on('click', function (e) {
+        marker.setLatLng(e.latlng);
+        updatePosition(e.latlng);
+    });
+    marker.on('dragend', function (e) {
+        updatePosition(marker.getLatLng());
+    });
+    updatePosition(marker.getLatLng());
+</script>
+
+<style>
+    body {
+        background-color: #ffffff;
+        font-family: 'Comic Sans MS', cursive, sans-serif;
+        margin: 0;
+        padding: 0;
+        min-height: 100vh;
+    }
+
+    .rescue-container {
+        background-color: #ffffff;
+        padding: 50px 20px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+    }
+
+    .rescue-card {
+        background-color: #ffffff;
+        border: 2px solid #e5c185;
+        border-radius: 20px;
+        padding: 40px;
+        width: 100%;
+        max-width: 800px;
+        box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+        transition: transform 0.3s ease;
+    }
+
+        .rescue-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .rescue-card h2 {
+            color: #6b4b2e;
+            font-size: 32px;
+            margin-bottom: 30px;
+            text-align: center;
+            font-weight: 700;
+        }
+
+    .alert-success {
+        background-color: #d4edda;
+        border-color: #c3e6cb;
+        color: #155724;
+        padding: 15px;
+        border-radius: 10px;
+        margin-bottom: 20px;
+        text-align: center;
+    }
+
+    .rescue-card div {
+        margin-bottom: 20px;
+    }
+
+    .rescue-card label {
+        display: block;
+        margin-bottom: 10px;
+        color: #6b4b2e;
+        font-weight: 600;
+        font-size: 16px;
+    }
+
+    .form-control {
+        width: 100%;
+        padding: 12px 15px;
+        border: 2px solid #e5c185;
+        border-radius: 10px;
+        font-size: 16px;
+        color: #6b4b2e;
+        background-color: #fff9f0;
+        transition: all 0.3s ease;
+    }
+
+        .form-control:focus {
+            outline: none;
+            border-color: #d4aa6a;
+            box-shadow: 0 0 0 3px rgba(229, 193, 133, 0.3);
+        }
+
+    #map {
+        border-radius: 15px;
+        border: 3px solid #e5c185;
+        transition: all 0.3s ease;
+    }
+
+        #map:hover {
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+    .btn-success {
+        background-color: #e5c185;
+        border: none;
+        padding: 15px 30px;
+        border-radius: 30px;
+        color: #6b4b2e;
+        font-weight: bold;
+        font-size: 18px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: block;
+        margin: 30px auto 0;
+    }
+
+        .btn-success:hover {
+            background-color: #d4aa6a;
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(229, 193, 133, 0.4);
+        }
+
+    .leaflet-control-container .leaflet-control,
+    .leaflet-popup-content-wrapper,
+    .leaflet-popup-tip {
+        border-radius: 10px;
+        border: 1px solid #e5c185;
+        background-color: #fff9f0;
+    }
+
+    #map {
+        height: 400px;
+    }
+</style>
