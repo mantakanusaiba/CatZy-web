@@ -8,7 +8,7 @@
         <li><a href="#">Pet Shop</a></li>
         <li><a href="@Url.Action("Adoption", "User")" class="active">Adoption</a></li>
         <!-- views/user/catdetails.cshtml -->
-        <a href="@Url.Action("Adopt", "User", new { id = Model.Id })" class="adopt-btn">Adopt Me</a>
+        <a href="@Url.Action("Adopt", "User", new { id = Model.Id })">Adopt Me</a>
 
         <li><a href="#">Vet Appointment</a></li>
        <li><a href="@Url.Action("PetDiary","User")">Pet Diary</a></li>
