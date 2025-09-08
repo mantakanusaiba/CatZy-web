@@ -1,0 +1,31 @@
+<h2>Doctor Credentials Approval</h2>
+<table border="1" cellpadding="10">
+    <tr>
+        <th>Name</th>
+        <th>Email</th>
+        <th>Phone</th>
+        <th>Specialization</th>
+        <th>Experience</th>
+        <th>Certificates</th>
+        <th>Profile Picture</th>
+        <th>Status</th>
+        <th>Action</th>
+    </tr>
+    @foreach (var doc in Model)
+    {
+        <tr>
+            <td>@doc.Name</td>
+            <td>@doc.Email</td>
+            <td>@doc.Phone</td>
+            <td>@doc.Specialization</td>
+            <td>@doc.Experience</td>
+            <td><a href="@doc.Certificates" target="_blank">View</a></td>
+            <td><img src="@doc.ProfilePic" width="80" /></td>
+            <td>@doc.Status</td>
+            <td>
+                <a href="@Url.Action("ApproveDoctor", "Admin", new { id = doc.Id })">Approve</a> |
+                <a href="@Url.Action("RejectDoctor", "Admin", new { id = doc.Id })">Reject</a>
+            </td>
+        </tr>
+    }
+</table>
