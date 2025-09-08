@@ -1,5 +1,7 @@
 ﻿using Catzy.Models;
 using System;
+using System.Configuration;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Web.Mvc;
 
@@ -9,7 +11,7 @@ namespace Catzy.Controllers
     {
         private AppDbContext db = new AppDbContext();
 
-        // GET: Signup
+        
         public ActionResult Signup()
         {
             return View();
@@ -20,7 +22,7 @@ namespace Catzy.Controllers
         {
             if (ModelState.IsValid)
             {
-                // check if email already exists
+               
                 var existing = db.Users.FirstOrDefault(u => u.Email == model.Email);
                 if (existing != null)
                 {
@@ -36,7 +38,7 @@ namespace Catzy.Controllers
             return View(model);
         }
 
-        // GET: Login
+       
         public ActionResult Login()
         {
             return View();
@@ -55,7 +57,27 @@ namespace Catzy.Controllers
                 if (user.Role == "Admin")
                     return RedirectToAction("Index", "Admin");
                 else if (user.Role == "Vet")
-                    return RedirectToAction("Index", "Vet");
+                {
+                   
+                    string status = null;
+                    using (var conn = new SqlConnection(ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString))
+                    {
+                        string query = "SELECT TOP 1 Status FROM DoctorCredentials WHERE Email = @Email ORDER BY Id DESC";
+                        SqlCommand cmd = new SqlCommand(query, conn);
+                        cmd.Parameters.AddWithValue("@Email", user.Email);
+                        conn.Open();
+                        status = cmd.ExecuteScalar()?.ToString();
+                    }
+
+                    if (status == "Approved")
+                    {
+                        return RedirectToAction("Index", "Vet"); 
+                    }
+                    else
+                    {
+                        return RedirectToAction("Credentials", "Vet"); 
+                    }
+                }
                 else
                     return RedirectToAction("Index", "User");
             }
@@ -63,7 +85,8 @@ namespace Catzy.Controllers
             return View(model);
         }
 
-        // Logout
+
+
         public ActionResult Logout()
         {
             Session.Clear();
