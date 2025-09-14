@@ -36,12 +36,22 @@ else
                         <td>@req.LocationDescription</td>
                         <td>@req.Latitude</td>
                         <td>@req.Longitude</td>
+ 
                         <td>
                             <button class="btn btn-primary" style="background-color: #e5c185; border: none; color: #6b4b2e; padding: 6px 12px; border-radius: 8px; font-family: 'Comic Sans MS', cursive, sans-serif;"
                                     onclick="focusLocation(@req.Latitude, @req.Longitude)">
                                 View Location
                             </button>
+
+                            @using (Html.BeginForm("DeleteRequest", "Rescue", new { id = req.Id }, FormMethod.Post, new { style = "display:inline-block; padding: 6px 12px", onsubmit = "return confirm('Delete this request?');" }))
+                            {
+                                @Html.AntiForgeryToken()
+                                <button type="submit" class="btn btn-danger" style="padding: 6px 12px; border-radius: 8px;">
+                                    Delete
+                                </button>
+                            }
                         </td>
+
                     </tr>
                 }
             </tbody>
@@ -53,7 +63,7 @@ else
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 
 <script>
-    // Initialize map
+    
     var map = L.map('map').setView([23.8103, 90.4125], 12);
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '© OpenStreetMap'
