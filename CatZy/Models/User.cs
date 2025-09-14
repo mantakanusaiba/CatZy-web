@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.ComponentModel.DataAnnotations;
 
 namespace Catzy.Models
 {
@@ -17,5 +18,9 @@ namespace Catzy.Models
 
         [Required]
         public string Role { get; set; }
+
+       
+        public string PasswordResetToken { get; set; }  
+        public DateTime? TokenExpiration { get; set; }  
     }
 }
