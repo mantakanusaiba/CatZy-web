@@ -1,0 +1,244 @@
+@model Catzy.Models.Appointment
+
+@{
+    ViewData["Title"] = "Catzy - Book Appointment";
+}
+
+@if (TempData["Message"] != null)
+{
+    <div id="temp-message" class="temp-message">
+        @TempData["Message"]
+    </div>
+
+    <script>
+        setTimeout(function () {
+            var msg = document.getElementById('temp-message');
+            if (msg) msg.style.display = 'none';
+        }, 5000); 
+    </script>
+}
+
+@using (Html.BeginForm("BookAppointment", "User", FormMethod.Post))
+{
+    @Html.AntiForgeryToken()
+    @Html.HiddenFor(m => m.Id)
+
+    <div class="appointment-header">
+        <div class="logo">Catzy</div>
+        <h2>Book a Veterinary Appointment</h2>
+        <button type="button" onclick="window.location.href='@Url.Action("Index", "User")'" class="back-btn">← Back</button>
+    </div>
+
+    <div class="appointment-container">
+        <section class="doctor-info">
+            <h3>Choose a Doctor</h3>
+            <div class="row">
+                <label>Doctor Name</label>
+                @Html.TextBoxFor(m => m.DoctorName, new { @class = "input-field", required = "required", @readonly = "readonly" })
+
+                <label>Specialization</label>
+                @Html.TextBoxFor(m => m.Specialization, new { @class = "input-field", required = "required", @readonly = "readonly" })
+            </div>
+            <div class="row">
+                <label>Consultation Hours</label>
+                @Html.TextBoxFor(m => m.ConsultationHours, new { @class = "input-field", required = "required", @readonly = "readonly" })
+            </div>
+        </section>
+
+        <hr />
+
+        <section class="date-time">
+            <h3>Select Date</h3>
+            <div class="calendar">
+                <label>Date</label>
+                @Html.TextBoxFor(m => m.Date, "{0:yyyy-MM-dd}", new
+                {
+                    type = "date",
+                    @class = "input-field",
+                    required = "required",
+                    id = "appointmentDate",
+                    min = DateTime.Now.ToString("yyyy-MM-dd"),
+                    value = DateTime.Now.ToString("yyyy-MM-dd")
+                })
+
+                <p id="date-status" style="text-align:center; font-weight:bold; margin-top:10px;"></p>
+            </div>
+        </section>
+
+        <hr />
+
+        <section class="cat-info">
+            <h3>Your Cat’s Info</h3>
+            <div class="row">
+                <label>Cat Name</label>
+                @Html.TextBoxFor(m => m.CatName, new { @class = "input-field", required = "required" })
+
+                <label>Age</label>
+                @Html.TextBoxFor(m => m.Age, new { type = "number", min = "0", @class = "input-field", required = "required" })
+            </div>
+            <div class="row">
+                <label>Breed</label>
+                @Html.TextBoxFor(m => m.Breed, new { @class = "input-field" })
+
+                <label>Symptoms</label>
+                @Html.TextAreaFor(m => m.Symptoms, new { @class = "input-field", rows = 3 })
+            </div>
+        </section>
+
+        <hr />
+
+        <section class="contact-info">
+            <h3>Contact Info</h3>
+            <div class="row">
+                <label>Your Name</label>
+                @Html.TextBoxFor(m => m.OwnerName, new { @class = "input-field", required = "required" })
+            </div>
+            <div class="row">
+                <label>Email</label>
+                @Html.TextBoxFor(m => m.Email, new { type = "email", @class = "input-field", required = "required" })
+
+                <label>Phone</label>
+                @Html.TextBoxFor(m => m.Phone, new { type = "tel", @class = "input-field", required = "required" })
+            </div>
+        </section>
+
+        <div class="submit">
+            <button type="submit" class="btn btn-primary">Confirm Appointment</button>
+        </div>
+    </div>
+}
+
+<script>
+document.getElementById('appointmentDate').addEventListener('change', function() {
+    var selectedDate = this.value;
+    var doctorName = '@Model.DoctorName';
+
+    if(selectedDate && doctorName) {
+        fetch('@Url.Action("CheckAvailability", "User")?doctorName=' + encodeURIComponent(doctorName) + '&date=' + selectedDate)
+        .then(response => response.json())
+        .then(data => {
+            var status = document.getElementById('date-status');
+            if(data.available) {
+                status.innerText = "Available";
+                status.style.color = "green";
+            } else {
+                status.innerText = "Not Available";
+                status.style.color = "red";
+            }
+        })
+        .catch(error => console.error(error));
+    }
+});
+</script>
+
+<style>
+    body {
+        background-color: #ffd89e;
+        font-family: 'Comic Sans MS', cursive;
+        margin: 0;
+        padding: 0;
+    }
+
+    .appointment-header {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        background-color: #5b3c1d;
+        color: #fff3d4;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 12px 20px;
+        z-index: 1000;
+    }
+
+        .appointment-header .logo {
+            font-size: 22px;
+            font-weight: bold;
+            color: #fff3d4;
+        }
+
+        .appointment-header h2 {
+            flex: 1;
+            text-align: center;
+            margin: 0;
+            font-size: 20px;
+            color: #fff3d4;
+        }
+
+    .back-btn {
+        background-color: #fff3d4;
+        border: none;
+        padding: 6px 15px;
+        border-radius: 20px;
+        font-weight: bold;
+        color: #5b3c1d;
+        cursor: pointer;
+    }
+
+    .appointment-container {
+        background: #ffd699;
+        padding: 30px;
+        margin-top: 80px;
+    }
+
+    h2, h3 {
+        color: #6b4b2e;
+        text-align: center;
+    }
+
+    .row {
+        display: flex;
+        gap: 20px;
+        margin: 10px 0;
+    }
+
+    label {
+        color: #6b4b2e;
+        font-weight: bold;
+    }
+
+    .input-field {
+        flex: 1;
+        background: #fff1c1;
+        border: none;
+        padding: 8px;
+        border-radius: 5px;
+    }
+
+    #date-status {
+        font-size: 16px;
+    }
+
+    .temp-message {
+        position: fixed;
+        top: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        background-color: #4caf50;
+        color: white;
+        font-weight: bold;
+        padding: 12px 25px;
+        border-radius: 8px;
+        z-index: 2000;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+        text-align: center;
+        font-size: 16px;
+    }
+
+    .submit {
+        text-align: center;
+        margin-top: 20px;
+    }
+
+        .submit button {
+            background: #c99a5b;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 15px;
+            font-weight: bold;
+            color: white;
+            cursor: pointer;
+        }
+</style> 

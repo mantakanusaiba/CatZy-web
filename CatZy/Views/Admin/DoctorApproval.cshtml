@@ -14,7 +14,7 @@
     <style>
         body {
             font-family: 'Comic Sans MS', cursive;
-            background-color: #ffcc99;
+            background-color: #ffd699;
             margin: 0;
             padding: 0;
         }
@@ -125,9 +125,12 @@
             <div class="card">
                 <h3>Dr. @doc.Name</h3>
                 <p>@doc.Specialization</p>
-               
+                <p><b>License:</b> VET-@doc.Id</p>
                 <p><b>Experience:</b> @doc.Experience years</p>
+                <p><b>Consultation Hours:</b> @doc.ConsultationHours</p>
                 <p><b>Email:</b> @doc.Email | <b>Phone:</b> @doc.Phone</p>
+                <p><b>Hospital/Clinic:</b> @doc.HospitalName</p>
+
                 <p>
                     <b>Certificate:</b> <a href="@doc.Certificates" target="_blank" class="view-link">View Full Credentials →</a>
                 </p>
@@ -137,6 +140,7 @@
                 </div>
             </div>
         }
+
     </div>
 </body>
 </html>

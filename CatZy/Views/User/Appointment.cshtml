@@ -1,178 +1,137 @@
-@model Catzy.Models.Appointment
+@model List<Catzy.Models.DoctorCredential>
 
-@{
-    ViewData["Title"] = "Catzy - Book Appointment";
-}
+<div class="header">
+    <div class="logo">Catzy</div>
+    <h2>Available Veterinarians</h2>
+    <a href="@Url.Action("Index", "User")" class="back-btn">Back</a>
+</div>
 
-@using (Html.BeginForm("Appointment", "User", FormMethod.Post))
-{
-    @Html.AntiForgeryToken()
-    
-    <div class="appointment-header">
-        <div class="logo">Catzy</div>
-        <h2>Book a Veterinary Appointment</h2>
-        <button type="button" onclick="window.location.href='@Url.Action("Index", "User")'" class="back-btn">← Back</button>
-    </div>
+<p class="subtitle">Select a vet and book your appointment</p>
 
-    <div class="appointment-container">
-        
-        <section class="doctor-info">
-            <h3>Choose a Doctor</h3>
-            <div class="row">
-                <label>Doctor Name</label>
-                @Html.TextBoxFor(m => m.DoctorName, new { @class = "input-field", required = "required" })
+<div class="vet-list">
+    @foreach (var vet in Model)
+    {
+        <div class="card">
+            <img src="@vet.ProfilePic" alt="@vet.Name" class="profile-pic" />
+            <h3>Dr. @vet.Name</h3>
+            <p><b>Specialization:</b> @vet.Specialization</p>
+            <p><b>Experience:</b> @vet.Experience years</p>
+            <p><b>Consultation Hours:</b> @vet.ConsultationHours</p>
+            <p><b>Hospital/Clinic:</b> @vet.HospitalName</p>
+            <p><b>Email:</b> @vet.Email | <b>Phone:</b> @vet.Phone</p>
 
-                <label>Specialization</label>
-                @Html.TextBoxFor(m => m.Specialization, new { @class = "input-field", required = "required" })
+            <div class="btn-wrapper">
+                <a href="@Url.Action("BookAppointment", "User", new { doctorId = vet.Id })" class="btn">
+                    Book Appointment
+                </a>
             </div>
-        </section>
-
-        <hr />
-
-       
-        <section class="date-time">
-            <h3>Select Date and Time</h3>
-            <div class="calendar">
-                <label>Date</label>
-                @Html.TextBoxFor(m => m.Date, "{0:yyyy-MM-dd}", new { type = "date", @class = "input-field", required = "required" })
-            </div>
-            <div class="row">
-                <label>From</label>
-                @Html.TextBoxFor(m => m.FromTime, new { type = "time", @class = "input-field", required = "required" })
-
-                <label>To</label>
-                @Html.TextBoxFor(m => m.ToTime, new { type = "time", @class = "input-field", required = "required" })
-            </div>
-        </section>
-
-        <hr />
-
-        <section class="cat-info">
-            <h3>Your Cat’s Info</h3>
-            <div class="row">
-                <label>Cat Name</label>
-                @Html.TextBoxFor(m => m.CatName, new { @class = "input-field", required = "required" })
-
-                <label>Age</label>
-                @Html.TextBoxFor(m => m.Age, new { type = "number", @class = "input-field", required = "required" })
-            </div>
-            <div class="row">
-                <label>Breed</label>
-                @Html.TextBoxFor(m => m.Breed, new { @class = "input-field" })
-
-                <label>Symptoms</label>
-                @Html.TextAreaFor(m => m.Symptoms, new { @class = "input-field", rows = 3 })
-            </div>
-        </section>
-
-        <hr />
-
-        <section class="contact-info">
-            <h3>Contact Info</h3>
-            <div class="row">
-                <label>Your Name</label>
-                @Html.TextBoxFor(m => m.OwnerName, new { @class = "input-field", required = "required" })
-            </div>
-            <div class="row">
-                <label>Email</label>
-                @Html.TextBoxFor(m => m.Email, new { type = "email", @class = "input-field", required = "required" })
-
-                <label>Phone</label>
-                @Html.TextBoxFor(m => m.Phone, new { type = "tel", @class = "input-field", required = "required" })
-            </div>
-        </section>
-
-        
-        <div class="submit">
-            <button type="submit">Confirm Appointment</button>
         </div>
-    </div>
-}
+    }
+</div>
 
 <style>
     body {
-        background-color: #ffd699;
         font-family: 'Comic Sans MS', cursive;
+        background-color: #ffd89e;
         margin: 0;
         padding: 0;
     }
 
-   
-    .appointment-header {
+    .header {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
         background-color: #5b3c1d;
         color: #fff3d4;
         display: flex;
         justify-content: space-between;
         align-items: center;
         padding: 12px 20px;
+        z-index: 1000;
     }
 
-        .appointment-header .logo {
-            font-size: 22px;
-            font-weight: bold;
-            color: #fff3d4;
-        }
-
-        .appointment-header h2 {
-            flex: 1;
-            text-align: center;
-            margin: 0;
-            font-size: 20px;
-            color: #fff3d4;
-        }
+    .header .logo {
+        font-weight: bold;
+        font-size: 22px;
+    }
 
     .back-btn {
-        background-color: #fff3d4;
-        border: none;
-        padding: 6px 15px;
-        border-radius: 20px;
-        font-weight: bold;
+        background: #fff3d4;
         color: #5b3c1d;
-        cursor: pointer;
-    }
-
-   
-    .appointment-container {
-        background: #ffd699;
-        padding: 30px;
-    }
-
-    h2, h3 {
-        color: #6b4b2e;
-        text-align: center;
-    }
-
-    .row {
-        display: flex;
-        gap: 20px;
-        margin: 10px 0;
-    }
-
-    label {
-        color: #6b4b2e;
-        font-weight: bold;
-    }
-
-    .input-field {
-        flex: 1;
-        background: #fff1c1;
         border: none;
-        padding: 8px;
-        border-radius: 5px;
+        border-radius: 20px;
+        padding: 5px 15px;
+        cursor: pointer;
+        text-decoration: none;
     }
 
-    .submit {
-        text-align: center;
-        margin-top: 20px;
+    .subtitle {
+        color: #5a3e36;
+        padding: 15px 20px;
+        margin: 0;
     }
 
-        .submit button {
-            background: #c99a5b;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 15px;
-            font-weight: bold;
-            color: white;
-            cursor: pointer;
-        }
+    .vet-list {
+        display: flex;
+        flex-wrap: wrap;  
+        gap: 20px;
+        padding: 20px;
+        margin-top: 80px;
+        justify-content: center; 
+    }
+
+    .card {
+        background-color: #FFF8DC;
+        border-radius: 15px;
+        padding: 20px;
+        box-shadow: 0px 4px 8px rgba(0,0,0,0.1);
+        transition: transform 0.2s ease-in-out;
+        flex: 0 1 calc(33.333% - 20px); /* 3 cards per row with gap */
+        box-sizing: border-box;
+    }
+
+    .card:hover {
+        transform: scale(1.02);
+    }
+
+    .profile-pic {
+        width: 70px;
+        height: 70px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 2px solid #D2691E;
+        margin-bottom: 10px;
+    }
+
+    .card h3 {
+        color: #3B2F2F;
+        margin: 0 0 8px 0;
+    }
+
+    .card p {
+        margin: 4px 0;
+        font-size: 14px;
+        color: #4a3b32;
+    }
+
+    .btn-wrapper {
+        display: flex;
+        justify-content: center;
+    }
+
+    .btn {
+        display: inline-block;
+        margin-top: 10px;
+        padding: 6px 12px;
+        background: #d5975d;
+        color: white;
+        text-decoration: none;
+        border-radius: 20px;
+        font-size: 13px;
+        transition: background 0.3s;
+    }
+
+  
+    }
 </style>

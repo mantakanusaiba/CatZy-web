@@ -13,21 +13,23 @@ namespace Catzy.Controllers
     {
         private AppDbContext db = new AppDbContext();
 
-         public ActionResult Credentials()
- {
-     if (Session["Role"] == null || Session["Role"].ToString() != "Vet")
-     {
-         return RedirectToAction("Login", "Account");
-     }
+        public ActionResult Credentials()
+        {
+            if (Session["Role"] == null || Session["Role"].ToString() != "Vet")
+            {
+                return RedirectToAction("Login", "Account");
+            }
 
-     return View();
- }
-
+            return View();
+        }
         [HttpPost]
         public ActionResult Credentials(DoctorCredential model, HttpPostedFileBase Certificates, HttpPostedFileBase ProfilePic)
         {
             if (Session["Role"] == null || Session["Role"].ToString() != "Vet")
                 return RedirectToAction("Login", "Account");
+
+            model.ConsultationHours = Request.Form["ConsultationHours"];
+            model.HospitalName = Request.Form["HospitalName"];
 
             if (ModelState.IsValid)
             {
@@ -49,14 +51,15 @@ namespace Catzy.Controllers
                 using (var conn = new SqlConnection(ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString))
                 {
                     string query = @"INSERT INTO DoctorCredentials 
-                            ( Name, Email, Phone, Specialization, ConsultationHours, Experience, Certificates, ProfilePic, Status) 
-                             VALUES (@Name, @Email, @Phone, @Specialization, @ConsultationHours, @Experience, @Certificates, @ProfilePic, 'Pending')";
+            ( Name, Email, Phone, HospitalName, Specialization, ConsultationHours, Experience, Certificates, ProfilePic, Status) 
+             VALUES (@Name, @Email, @Phone, @HospitalName, @Specialization, @ConsultationHours, @Experience, @Certificates, @ProfilePic, 'Pending')";
 
                     SqlCommand cmd = new SqlCommand(query, conn);
-                    
+
                     cmd.Parameters.AddWithValue("@Name", model.Name);
                     cmd.Parameters.AddWithValue("@Email", model.Email);
                     cmd.Parameters.AddWithValue("@Phone", model.Phone);
+                    cmd.Parameters.AddWithValue("@HospitalName", model.HospitalName); 
                     cmd.Parameters.AddWithValue("@Specialization", model.Specialization);
                     cmd.Parameters.AddWithValue("@ConsultationHours", model.ConsultationHours);
                     cmd.Parameters.AddWithValue("@Experience", model.Experience);
@@ -72,6 +75,26 @@ namespace Catzy.Controllers
             }
 
             return View(model);
+        }
+
+
+        [HttpGet]
+        public ActionResult AppointmentList()
+        {
+           
+            if (Session["Role"] == null || Session["Role"].ToString() != "Vet")
+                return RedirectToAction("Login", "Account");
+
+            
+            string vetName = Session["Username"].ToString();
+
+         
+            var appointments = db.Appointments
+                                 .Where(a => a.DoctorName == vetName)
+                                 .OrderBy(a => a.Date)
+                                 .ToList();
+
+            return View(appointments);
         }
 
 
