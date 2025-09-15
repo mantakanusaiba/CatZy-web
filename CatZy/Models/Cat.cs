@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 
-namespace CatZy.Models
+namespace Catzy.Models
 {
     public class Cat
     {
@@ -21,7 +21,7 @@ namespace CatZy.Models
     }
 
 }
-namespace CatZy.Models
+namespace Catzy.Models
 {
     public class AdoptionViewModel
     {

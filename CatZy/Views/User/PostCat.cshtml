@@ -1,0 +1,136 @@
+@{
+    ViewBag.Title = "Post a Cat for Adoption";
+}
+<nav class="navbar">
+    <div class="logo">Catzy</div>
+    <ul class="nav-links">
+        <li><a href="@Url.Action("Index","User")">Home</a></li>
+        <li><a href="@Url.Action("Adoption","User")" class="active">Adoption</a></li>
+        <li><a href="@Url.Action("PetDiary","User")">Pet Diary</a></li>
+        <li><a href="/Account/Logout">Logout</a></li>
+    </ul>
+</nav>
+<div class="post-wrap">
+    <h2>Post a Cat for Adoption</h2>
+    @using (Html.BeginForm("PostCat", "User", FormMethod.Post, new { enctype = "multipart/form-data", @class = "post-form" }))
+    {
+        @Html.AntiForgeryToken()
+        <div class="grid">
+            <div><label>Name</label><input type="text" name="Name" required /></div>
+            <div><label>Age</label><input type="text" name="Age" placeholder="e.g., 1 year" /></div>
+            <div>
+                <label>Gender</label>
+                <select name="Gender"><option>Male</option><option>Female</option></select>
+            </div>
+            <div><label>Color</label><input type="text" name="Color" /></div>
+            <div><label>Breed</label><input type="text" name="Breed" /></div>
+            <div class="span2"><label>Description</label><textarea name="Description" rows="3"></textarea></div>
+            <div><label>Photo</label><input type="file" name="ImageFile" accept="image/*" id="postPhoto" /></div>
+            <div class="preview"><img id="postPreview" src="~/Content/image/cat-placeholder.jpg" alt="preview" /></div>
+        </div>
+        <button type="submit" class="btn primary">Post Cat</button>
+    }
+</div>
+<script>
+(function(){
+  const input = document.getElementById('postPhoto');
+  const img = document.getElementById('postPreview');
+  if (input && img){
+    input.addEventListener('change', function(){
+      if (this.files && this.files[0]) {
+        img.src = URL.createObjectURL(this.files[0]);
+      }
+    });
+  }
+})();
+</script>
+<style>
+    body {
+        margin: 0;
+        background: #ffd699;
+        font-family: "Segoe UI",Tahoma,Verdana,sans-serif
+    }
+
+    .navbar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        background: #644426;
+        color: #fff;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 12px 28px;
+        z-index: 10
+    }
+
+    .nav-links {
+        list-style: none;
+        display: flex;
+        gap: 22px;
+        margin: 0;
+        padding: 0
+    }
+
+        .nav-links a {
+            color: #fff;
+            text-decoration: none;
+            font-weight: 700
+        }
+
+        .nav-links .active {
+            text-decoration: underline
+        }
+
+    .post-wrap {
+        margin-top: 84px;
+        padding: 22px
+    }
+
+    .post-form .grid {
+        display: grid;
+        grid-template-columns: repeat(2,minmax(220px,1fr));
+        gap: 12px;
+        background: #fff3e0;
+        border: 1px solid #f0d7aa;
+        border-radius: 12px;
+        padding: 16px
+    }
+
+    .post-form input, .post-form textarea, .post-form select {
+        width: 100%;
+        padding: 10px;
+        border: 2px solid #e5c185;
+        border-radius: 8px;
+        background: #fff
+    }
+
+    .post-form .span2 {
+        grid-column: 1/-1
+    }
+
+    .preview img {
+        width: 100%;
+        max-height: 180px;
+        object-fit: cover;
+        border-radius: 8px;
+        border: 1px solid #f0d7aa;
+        background: #fff
+    }
+
+    .btn {
+        background: #e5c185;
+        color: #6b4b2e;
+        border: none;
+        border-radius: 18px;
+        padding: 8px 12px;
+        font-weight: 800;
+        cursor: pointer
+    }
+
+        .btn.primary {
+            background: #d8a55b;
+            color: #fff
+        }
+</style>
