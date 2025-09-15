@@ -3,7 +3,7 @@
     ViewBag.Title = "Catzy - Update Product";
 }
 
-<!-- Navbar -->
+
 <nav class="navbar">
     <div class="logo">CatZy</div>
     <ul class="nav-links">
@@ -14,10 +14,10 @@
     </ul>
 </nav>
 
-<!-- Main Layout -->
+
 <div class="admin-container">
 
-    <!-- Sidebar -->
+
     <aside class="sidebar">
         <ul>
             <li><a href="@Url.Action("Index", "Product")">📂 All Products</a></li>
@@ -29,13 +29,15 @@
         </ul>
     </aside>
 
-    <!-- Content Section -->
+
     <main class="content">
         <h1>Update Product</h1>
         <p>Modify the details below to update this product.</p>
 
         @using (Html.BeginForm())
+
         {
+            @Html.AntiForgeryToken()
             @Html.HiddenFor(m => m.Id)
 
             <div class="form-grid">
@@ -184,7 +186,7 @@
             margin-bottom: 20px;
         }
 
-    /* Form Styling */
+
     .form-grid {
         display: grid;
         grid-template-columns: 1fr 1fr;

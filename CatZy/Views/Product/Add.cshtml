@@ -1,9 +1,8 @@
 @model Catzy.Models.Product
 @{
-    ViewBag.Title = "Catzy - Update Product";
+    ViewBag.Title = "Catzy - Add Product";
 }
 
-<!-- Navbar -->
 <nav class="navbar">
     <div class="logo">CatZy</div>
     <ul class="nav-links">
@@ -14,10 +13,10 @@
     </ul>
 </nav>
 
-<!-- Main Layout -->
+
 <div class="admin-container">
 
-    <!-- Sidebar -->
+
     <aside class="sidebar">
         <ul>
             <li><a href="@Url.Action("Index", "Product")">📂 All Products</a></li>
@@ -29,51 +28,60 @@
         </ul>
     </aside>
 
-    <!-- Content Section -->
+
     <main class="content">
-        <h1>Update Product</h1>
-        <p>Modify the details below to update this product.</p>
+        <h1>Add Product</h1>
+        <p>Fill the details below to add new product.</p>
 
         @using (Html.BeginForm())
         {
-            @Html.HiddenFor(m => m.Id)
+            @Html.AntiForgeryToken()
+            @Html.ValidationSummary(false, "", new { @class = "text-danger" })
+
 
             <div class="form-grid">
                 <div class="form-group">
                     @Html.LabelFor(m => m.Name, "Product Name")
-                    @Html.TextBoxFor(m => m.Name, new { @class = "input" })
+                    @Html.TextBoxFor(m => m.Name, new { @class = "input", autocomplete = "off" })
+                    @Html.ValidationMessageFor(m => m.Name, "", new { @class = "text-danger" })
                 </div>
 
                 <div class="form-group">
                     @Html.LabelFor(m => m.Price, "Price (Tk)")
-                    @Html.TextBoxFor(m => m.Price, new { @class = "input" })
+                    @Html.TextBoxFor(m => m.Price, new { @class = "input", type = "number", step = "0.01", inputmode = "decimal", autocomplete = "off" })
+                    @Html.ValidationMessageFor(m => m.Price, "", new { @class = "text-danger" })
                 </div>
 
                 <div class="form-group">
                     @Html.LabelFor(m => m.Category, "Category")
-                    @Html.TextBoxFor(m => m.Category, new { @class = "input" })
+                    @Html.TextBoxFor(m => m.Category, new { @class = "input", autocomplete = "off" })
+                    @Html.ValidationMessageFor(m => m.Category, "", new { @class = "text-danger" })
                 </div>
 
                 <div class="form-group">
                     @Html.LabelFor(m => m.Stock, "Stock Quantity")
-                    @Html.TextBoxFor(m => m.Stock, new { @class = "input" })
+                    @Html.TextBoxFor(m => m.Stock, new { @class = "input", type = "number", step = "1", min = "0", autocomplete = "off" })
+                    @Html.ValidationMessageFor(m => m.Stock, "", new { @class = "text-danger" })
                 </div>
 
                 <div class="form-group full-width">
                     @Html.LabelFor(m => m.Description, "Description")
-                    @Html.TextAreaFor(m => m.Description, new { @class = "textarea" })
+                    @Html.TextAreaFor(m => m.Description, new { @class = "textarea", autocomplete = "off" })
+                    @Html.ValidationMessageFor(m => m.Description, "", new { @class = "text-danger" })
                 </div>
 
                 <div class="form-group full-width">
                     @Html.LabelFor(m => m.Icon, "Icon")
-                    @Html.TextBoxFor(m => m.Icon, new { @class = "input" })
+                    @Html.TextBoxFor(m => m.Icon, new { @class = "input", autocomplete = "off" })
+                    @Html.ValidationMessageFor(m => m.Icon, "", new { @class = "text-danger" })
                 </div>
             </div>
 
             <div class="form-actions">
-                <button type="submit" class="btn">✏️ Update Product</button>
+                <button type="submit" class="btn">✏️ Add Product</button>
             </div>
         }
+
     </main>
 </div>
 
@@ -184,7 +192,7 @@
             margin-bottom: 20px;
         }
 
-    /* Form Styling */
+
     .form-grid {
         display: grid;
         grid-template-columns: 1fr 1fr;

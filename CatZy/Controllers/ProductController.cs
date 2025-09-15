@@ -1,5 +1,8 @@
+using System;
 using System.Collections.Generic;
-using System.Linq;
+using System.Configuration;
+using System.Data;
+using System.Data.SqlClient;
 using System.Web.Mvc;
 using Catzy.Models;
 
@@ -7,94 +10,231 @@ namespace Catzy.Controllers
 {
     public class ProductController : Controller
     {
-        
-        private static List<Product> products = new List<Product>
-{
-   
-   
-    new Product { Id=1, Name="Interactive Ball", Description="Motion-activated fun toy", Price=350, Stock=45, Category="Toys", Icon="ball.png" },
-    new Product { Id=2, Name="Plush Mouse", Description="Soft toy mouse with catnip", Price=200, Stock=50, Category="Toys", Icon="mouse.png" },
-    new Product { Id=3, Name="Vitamin", Description="Daily health support", Price=550, Stock=45, Category="Health Care", Icon="vitamin.png" },
-    new Product { Id=4, Name="Shampoo", Description="Gentle shampoo for skin", Price=400, Stock=20, Category="Accessories", Icon="shampoo.png" },
-    new Product { Id=5, Name="Flea Collar", Description="Protects from fleas and ticks", Price=600, Stock=35, Category="Accessories", Icon="collar.png" },
-    new Product { Id=6, Name="Food Bowl", Description="Non-slip stainless steel", Price=500, Stock=45, Category="Pet Food", Icon="bowl.png" },
-    new Product { Id=7, Name="Dry Cat Food", Description="Nutritious dry food ", Price=1200, Stock=60, Category="Pet Food", Icon="food.png" },
-    new Product { Id=8, Name="Canned Food", Description="Tasty canned food ", Price=950, Stock=40, Category="Pet Food", Icon="can.png" },
-     new Product { Id=9, Name="Pet Carrier", Description="Portable pet carrier ", Price=1550, Stock=20, Category="Accessories", Icon="carrier.png" }
+        private string ConnStr => ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString;
 
-};
-
-
-        // GET: Product (All Products page)
-        public ActionResult Index()
+        private void EnsureProductsTable()
         {
-            return View(products);
+            var sql = @"
+IF NOT EXISTS (
+    SELECT 1
+    FROM sys.tables t
+    JOIN sys.schemas s ON s.schema_id = t.schema_id
+    WHERE s.name = 'dbo' AND t.name = 'Products'
+)
+BEGIN
+    CREATE TABLE dbo.Products (
+        Id INT IDENTITY(1,1) PRIMARY KEY,
+        Name NVARCHAR(100) NOT NULL,
+        Description NVARCHAR(500) NULL,
+        Price DECIMAL(18,2) NOT NULL,
+        Stock INT NOT NULL,
+        Category NVARCHAR(100) NOT NULL,
+        Icon NVARCHAR(255) NULL,
+        CreatedAt DATETIME NOT NULL CONSTRAINT DF_Products_CreatedAt DEFAULT (GETDATE())
+    );
+    CREATE INDEX IX_Products_Category ON dbo.Products(Category);
+END;";
+            using (var con = new SqlConnection(ConnStr))
+            using (var cmd = new SqlCommand(sql, con))
+            {
+                con.Open();
+                cmd.ExecuteNonQuery();
+            }
         }
 
-        // GET: Product/Add (show form)
+        private static Product MapProduct(IDataReader r)
+        {
+            return new Product
+            {
+                Id = r.GetInt32(0),
+                Name = r.GetString(1),
+                Description = r.IsDBNull(2) ? null : r.GetString(2),
+                Price = r.GetDecimal(3),
+                Stock = r.GetInt32(4),
+                Category = r.GetString(5),
+                Icon = r.IsDBNull(6) ? null : r.GetString(6)
+            };
+        }
+
+        public ActionResult Index()
+        {
+            EnsureProductsTable();
+
+            const string sql = @"
+SELECT Id, Name, Description, Price, Stock, Category, Icon
+FROM dbo.Products
+ORDER BY Id DESC;";
+
+            var list = new List<Product>();
+            using (var con = new SqlConnection(ConnStr))
+            using (var cmd = new SqlCommand(sql, con))
+            {
+                con.Open();
+                using (var r = cmd.ExecuteReader())
+                {
+                    while (r.Read())
+                        list.Add(MapProduct(r));
+                }
+            }
+
+            return View(list);
+        }
+
+        [HttpGet]
         public ActionResult Add()
         {
+            EnsureProductsTable();
             return View();
         }
 
-        // POST: Product/Add (save new product)
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public ActionResult Add(Product model)
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
+                return View(model);
+
+            EnsureProductsTable();
+
+            const string sql = @"
+INSERT INTO dbo.Products (Name, Description, Price, Stock, Category, Icon)
+VALUES (@Name, @Description, @Price, @Stock, @Category, @Icon);";
+
+            using (var con = new SqlConnection(ConnStr))
+            using (var cmd = new SqlCommand(sql, con))
             {
-                model.Id = products.Count > 0 ? products.Max(p => p.Id) + 1 : 1;
-                products.Add(model);
-                return RedirectToAction("Index");
+                cmd.Parameters.Add("@Name", SqlDbType.NVarChar, 100).Value = model.Name;
+                cmd.Parameters.Add("@Description", SqlDbType.NVarChar, 500).Value = (object)model.Description ?? DBNull.Value;
+
+                var pPrice = cmd.Parameters.Add("@Price", SqlDbType.Decimal);
+                pPrice.Precision = 18;  // DECIMAL(18,2)
+                pPrice.Scale = 2;
+                pPrice.Value = model.Price;
+
+                cmd.Parameters.Add("@Stock", SqlDbType.Int).Value = model.Stock;
+                cmd.Parameters.Add("@Category", SqlDbType.NVarChar, 100).Value = model.Category;
+                cmd.Parameters.Add("@Icon", SqlDbType.NVarChar, 255).Value = (object)model.Icon ?? DBNull.Value;
+
+                con.Open();
+                cmd.ExecuteNonQuery();
             }
-            return View(model);
+
+            return RedirectToAction("Index");
         }
 
-        // GET: Product/Update/5
+        [HttpGet]
         public ActionResult Update(int id)
         {
-            var product = products.FirstOrDefault(p => p.Id == id);
+            EnsureProductsTable();
+
+            const string sql = @"
+SELECT Id, Name, Description, Price, Stock, Category, Icon
+FROM dbo.Products
+WHERE Id = @Id;";
+
+            Product product = null;
+            using (var con = new SqlConnection(ConnStr))
+            using (var cmd = new SqlCommand(sql, con))
+            {
+                cmd.Parameters.Add("@Id", SqlDbType.Int).Value = id;
+                con.Open();
+                using (var r = cmd.ExecuteReader())
+                {
+                    if (r.Read())
+                        product = MapProduct(r);
+                }
+            }
+
             if (product == null) return HttpNotFound();
             return View(product);
         }
 
-        // POST: Product/Update
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public ActionResult Update(Product model)
         {
-            var product = products.FirstOrDefault(p => p.Id == model.Id);
-            if (product != null)
+            if (!ModelState.IsValid)
+                return View(model);
+
+            EnsureProductsTable();
+
+            const string sql = @"
+UPDATE dbo.Products
+SET Name = @Name,
+    Description = @Description,
+    Price = @Price,
+    Stock = @Stock,
+    Category = @Category,
+    Icon = @Icon
+WHERE Id = @Id;";
+
+            using (var con = new SqlConnection(ConnStr))
+            using (var cmd = new SqlCommand(sql, con))
             {
-                product.Name = model.Name;
-                product.Description = model.Description;
-                product.Price = model.Price;
-                product.Stock = model.Stock;
-                product.Category = model.Category;
-                product.Icon = model.Icon;
+                cmd.Parameters.Add("@Name", SqlDbType.NVarChar, 100).Value = model.Name;
+                cmd.Parameters.Add("@Description", SqlDbType.NVarChar, 500).Value = (object)model.Description ?? DBNull.Value;
+
+                var pPrice = cmd.Parameters.Add("@Price", SqlDbType.Decimal);
+                pPrice.Precision = 18;
+                pPrice.Scale = 2;
+                pPrice.Value = model.Price;
+
+                cmd.Parameters.Add("@Stock", SqlDbType.Int).Value = model.Stock;
+                cmd.Parameters.Add("@Category", SqlDbType.NVarChar, 100).Value = model.Category;
+                cmd.Parameters.Add("@Icon", SqlDbType.NVarChar, 255).Value = (object)model.Icon ?? DBNull.Value;
+                cmd.Parameters.Add("@Id", SqlDbType.Int).Value = model.Id;
+
+                con.Open();
+                cmd.ExecuteNonQuery();
             }
+
             return RedirectToAction("Index");
         }
 
-        // GET: Product/Delete/5
+        [HttpPost]
+        [ValidateAntiForgeryToken]
         public ActionResult Delete(int id)
         {
-            var product = products.FirstOrDefault(p => p.Id == id);
-            if (product != null)
+            EnsureProductsTable();
+
+            const string sql = "DELETE FROM dbo.Products WHERE Id = @Id;";
+
+            using (var con = new SqlConnection(ConnStr))
+            using (var cmd = new SqlCommand(sql, con))
             {
-                products.Remove(product);
+                cmd.Parameters.Add("@Id", SqlDbType.Int).Value = id;
+                con.Open();
+                cmd.ExecuteNonQuery();
             }
+
             return RedirectToAction("Index");
         }
-        // GET: Product/Category/Toys
+
         public ActionResult Category(string category)
         {
-            var filteredProducts = products
-                .Where(p => p.Category == category)
-                .ToList();
+            EnsureProductsTable();
+
+            const string sql = @"
+SELECT Id, Name, Description, Price, Stock, Category, Icon
+FROM dbo.Products
+WHERE Category = @Category
+ORDER BY Name;";
+
+            var list = new List<Product>();
+            using (var con = new SqlConnection(ConnStr))
+            using (var cmd = new SqlCommand(sql, con))
+            {
+                cmd.Parameters.Add("@Category", SqlDbType.NVarChar, 100).Value = category ?? string.Empty;
+                con.Open();
+                using (var r = cmd.ExecuteReader())
+                {
+                    while (r.Read())
+                        list.Add(MapProduct(r));
+                }
+            }
 
             ViewBag.SelectedCategory = category;
-            return View("Index", filteredProducts); // Reuse Index view
+            return View("Index", list);
         }
-
     }
 }
