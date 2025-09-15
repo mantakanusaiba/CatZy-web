@@ -1,0 +1,181 @@
+@model IEnumerable<Catzy.Models.OrderListItem>
+@{
+    ViewBag.Title = "Orders";
+}
+
+@if (!Model.Any())
+{
+    <p>No orders yet.</p>
+}
+else
+{
+    <div class="orders-container">
+        <h2>Orders</h2>
+        @if (!Model.Any())
+        {
+            <p>No orders yet.</p>
+        }
+        else
+        {
+            <table class="orders-table">
+                <thead>
+                    <tr>
+                        <th>Order #</th>
+                        <th>Date</th>
+                        <th>Name</th>
+                        <th>Subtotal</th>
+                        <th>Shipping</th>
+                        <th>Total</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var o in Model)
+                    {
+                        <tr>
+                            <td>@o.OrderId</td>
+                            <td>@o.CreatedAt</td>
+                            <td>@o.FullName</td>
+                            <td>@o.Subtotal</td>
+                            <td>@o.Shipping</td>
+                            <td>@o.Total</td>
+                            <td><a href="@Url.Action("OrderDetails","Shop", new { id = o.OrderId })">Details</a></td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+
+        }
+
+
+    </div>
+    <p><a href="@Url.Action("Index","Admin")" class="back-link">Back</a></p>
+}
+
+
+<style>
+
+    body {
+        background-color: #ffffff;
+        font-family: 'Comic Sans MS', cursive, sans-serif;
+        margin: 0;
+        padding: 0;
+        min-height: 100vh;
+    }
+
+    .orders-container {
+        max-width: 1000px;
+        margin: 40px auto;
+        background: #ffffff;
+        border: 2px solid #e5c185;
+        border-radius: 20px;
+        padding: 40px;
+        box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+        overflow: hidden;
+        padding: 24px;
+    }
+
+        /* header */
+        .orders-container h2 {
+            color: #6b4b2e;
+            margin: 0 0 16px 0;
+            font-weight: 700;
+        }
+
+    /* table */
+    .orders-table {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0;
+        font-size: 14px;
+    }
+
+        .orders-table thead th {
+            background: #fff1c1;
+            color: #6b4b2e;
+            text-align: left;
+            font-weight: 600;
+            padding: 12px 14px;
+            border-bottom: 2px solid #f0e6d2;
+        }
+
+        .orders-table tbody td {
+            color: #6b4b2e;
+            padding: 12px 14px;
+            border-bottom: 1px solid #f0e6d2;
+        }
+
+        .orders-table tbody tr:nth-of-type(even) {
+            background: #fff9eb;
+        }
+
+        .orders-table tbody tr:hover {
+            background: #fff1c1;
+            transition: background-color 0.15s ease-in-out;
+        }
+
+
+        .orders-table td:nth-last-child(3),
+        .orders-table td:nth-last-child(2),
+        .orders-table td:nth-last-child(1) {
+            text-align: right;
+        }
+
+        .orders-table a {
+            display: inline-block;
+            background-color: #e5c185;
+            color: #6b4b2e;
+            text-decoration: none;
+            font-weight: 600;
+            padding: 8px 14px;
+            border-radius: 14px;
+            box-shadow: 0 4px 8px rgba(229, 193, 133, 0.3);
+            transition: background-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+            .orders-table a:hover {
+                background-color: #d4aa6a;
+                transform: translateY(-1px);
+                box-shadow: 0 6px 12px rgba(229, 193, 133, 0.4);
+            }
+
+
+        .orders-table thead th:first-child {
+            border-top-left-radius: 12px;
+        }
+
+        .orders-table thead th:last-child {
+            border-top-right-radius: 12px;
+        }
+
+    /* responsive tweaks */
+    @@media (max-width: 768px) {
+        .orders-container {
+            padding: 16px;
+        }
+
+        .orders-table th, .orders-table td {
+            padding: 10px 12px;
+        }
+    }
+    .back{
+        align-content:center;
+    }
+    .back-link {
+        display: inline-block;
+        margin-top: 16px;
+        text-decoration: none;
+        background-color: transparent;
+        border: 1px solid #e5c185;
+        padding: 12px 20px;
+        border-radius: 30px;
+        color: #6b4b2e;
+        font-weight: bold;
+        transition: all 0.3s ease;
+    }
+
+        .back-link:hover {
+            background-color: #fff1c1;
+            transform: translateY(-2px);
+        }
+</style>
