@@ -2,18 +2,16 @@
 @{
     ViewBag.Title = "Catzy - Product Management";
 }
-<!-- Navbar -->
+
 <nav class="navbar">
     <div class="logo">CatZy</div>
     <ul class="nav-links">
         <li><a href="#" class="active">Product Management</a></li>
-        <li><a href="#">Adoption Listing</a></li>
-        <li><a href="#">Doctor Approval</a></li>
         <li> <a href="@Url.Action("Index", "Admin")" class="btn-back">Back</a></a></li>
     </ul>
 </nav>
 
-<!-- Main Layout -->
+
 <div class="admin-container">
 
     <aside class="sidebar">
@@ -27,14 +25,14 @@
         </ul>
     </aside>
 
-    <!-- Content Section -->
+
     <main class="content">
         <h1>@(ViewBag.SelectedCategory ?? "All Products")</h1>
 
         <p>Showing @Model.Count() products</p>
 
 
-        <!-- Product Grid -->
+
         <div class="product-grid">
             @foreach (var item in Model)
             {
@@ -46,13 +44,16 @@
                     <h4>Tk @item.Price</h4>
                     <div class="card-buttons">
                         <a href="@Url.Action("Update", "Product", new { id = item.Id })" class="btn">Update</a>
-                        
-                        <a href="@Url.Action("Delete", "Product", new { id = item.Id })"
-                           onclick="return confirm('Are you sure you want to delete @item.Name?');"
-                            class="btn">Delete
-                        </a>
 
+                        @using (Html.BeginForm("Delete", "Product", FormMethod.Post, new { @class = "inline-form", onsubmit = "return confirm('Are you sure you want to delete @item.Name?');" }))
+                        {
+                            @Html.AntiForgeryToken()
+                            @Html.Hidden("id", item.Id)
+                            <button type="submit" class="btn">Delete</button>
+                        }
                     </div>
+
+
                 </div>
             }
         </div>
@@ -65,7 +66,7 @@
         font-family: 'Comic Sans MS', cursive, sans-serif;
         background-color: #f9d097;
     }
-    /* Navbar */
+
     .navbar {
         background-color: #644426;
         display: flex;
@@ -104,13 +105,13 @@
                 color: #f9d097;
             }
 
-    /* Layout */
+
     .admin-container {
         display: flex;
         min-height: 100vh;
     }
 
-    /* Sidebar */
+
     .sidebar {
         width: 260px;
         background-color: #fff1c1;
@@ -150,7 +151,7 @@
                         background-color: #e5c185;
                     }
 
-    /* Main Content */
+
     .content {
         flex-grow: 1;
         padding: 30px;
@@ -170,7 +171,7 @@
             font-size: 14px;
         }
 
-    /* Add Button */
+
     .btn-add {
         background-color: #e5c185;
         color: #6b4b2e;
@@ -186,7 +187,7 @@
             background-color: #dab078;
         }
 
-    /* Product Grid */
+
     .product-grid {
         display: grid;
         grid-template-columns: repeat(3, 1fr);
@@ -201,10 +202,9 @@
         box-shadow: 0px 4px 10px rgba(0,0,0,0.1);
         position: relative;
         transition: transform 0.2s;
-        flex-direction: column; 
+        flex-direction: column;
         justify-content: space-between;
         height: 350px;
-       
     }
 
         .product-card:hover {
@@ -214,10 +214,10 @@
         .product-card img {
             width: 100%;
             height: 80px;
-            object-fit: contain; 
+            object-fit: contain;
             margin-bottom: 15px;
-            margin-top:18px;
-            padding:8px;
+            margin-top: 18px;
+            padding: 8px;
         }
 
         .product-card h3 {
@@ -250,10 +250,14 @@
         font-weight: bold;
     }
 
-    .card-buttons {
-        display: flex;
-        flex-direction: column;
-        gap: 10px;
+    .card-buttons .btn {
+        display: block;
+        width: 100%;
+        margin-bottom: 12px;
+    }
+
+    .inline-form {
+        margin: 0;
     }
 
     .btn {
@@ -263,7 +267,7 @@
         text-decoration: none;
         color: #6b4b2e;
         font-weight: bold;
-        font-size:14px;
+        font-size: 14px;
         transition: background-color 0.2s;
     }
 
