@@ -1,73 +1,317 @@
-@model CatZy.Models.Cat
+@using Catzy.Models
+@model Catzy.Models.Cat
 
-<h2>Adopt @Model.Name</h2>
-@using (Html.BeginForm("ConfirmAdoption", "User", FormMethod.Post))
-{
-    @Html.AntiForgeryToken()
-    @Html.Hidden("CatId", Model.Id)
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Adopt @Model.Name - Catzy</title>
+</head>
+<body>
+    <!-- Navbar HTML Structure -->
+    <nav class="navbar">
+        <div class="logo">Catzy</div>
+        <ul class="nav-links">
+            <li><a href="@Url.Action("Index","User")">Home</a></li>
+            <li><a href="@Url.Action("Adoption","User")" class="active">Adoption</a></li>
+            <li><a href="@Url.Action("PetDiary","User")">Pet Diary</a></li>
+            <li><a href="/Account/Logout">Logout</a></li>
+        </ul>
+    </nav>
 
-    <label>Your Name:</label>
-    <input type="text" name="FullName" required />
+    <!-- Form Container -->
+    <div class="adopt-form-container">
+        <h2>Adopt @Model.Name</h2>
+        @using (Html.BeginForm("ConfirmAdoption", "User", FormMethod.Post))
+        {
+            @Html.AntiForgeryToken()
+            @Html.Hidden("CatId", Model.Id)
 
-    <label>Email:</label>
-    <input type="email" name="Email" required />
+            <div class="form-group">
+                <label><i class="icon">👤</i>Your Name:</label>
+                <input type="text" name="FullName" required placeholder="Enter your full name" />
+            </div>
 
-    <label>Phone:</label>
-    <input type="text" name="Phone" required />
+            <div class="form-group">
+                <label><i class="icon">✉️</i>Email:</label>
+                <input type="email" name="Email" required placeholder="Enter your email address" />
+            </div>
 
-    <label>Address:</label>
-    <textarea name="Address" rows="3" required></textarea>
+            <div class="form-group">
+                <label><i class="icon">📞</i>Phone:</label>
+                <input type="text" name="Phone" required placeholder="Enter your phone number" />
+            </div>
 
-    <button type="submit" class="submit-btn">Confirm Adoption</button>
-}
+            <div class="form-group">
+                <label><i class="icon">🏠</i>Address:</label>
+                <textarea name="Address" rows="3" required placeholder="Enter your complete address"></textarea>
+            </div>
 
+            <button type="submit" class="submit-btn">
+                <span class="btn-text">🐱 Confirm Adoption</span>
+            </button>
+        }
+    </div>
 
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
 
+        }
 
+        /* Navbar Styles - Exactly as you had them */
+        .navbar {
+            background-color: #644426;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 14px 40px;
+            width: 100%;
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 1000;
+        }
+        .navbar .logo {
+            font-size: 28px;
+            color: white;
+            font-weight: bold;
+        }
+        .nav-links {
+            list-style: none;
+            display: flex;
+            gap: 25px;
+            margin: 0;
+            padding: 0;
+        }
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        .nav-links .active {
+            text-decoration: underline;
+        }
+        .nav-links a:hover {
+            color: #d8a55b;
+            transition: color 0.3s ease;
+        }
 
-<style>
-    .adopt-form-container {
-        max-width: 500px;
-        margin: 100px auto;
-        background: #fff3e0;
-        padding: 20px;
-        border-radius: 12px;
-    }
+        /* Enhanced form styling */
+        body {
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+            background-color: #fde2b5;
+            min-height: 100vh;
+            margin: 0;
+        }
+
+        .adopt-form-container {
+            max-width: 600px;
+            margin: 120px auto 40px;
+            background: linear-gradient(145deg, #ffffff, #faf8f5);
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow:
+                0 20px 40px rgba(100, 68, 38, 0.1),
+                0 10px 20px rgba(0, 0, 0, 0.05);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .adopt-form-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: linear-gradient(90deg, #d8a55b, #f4c97b, #d8a55b);
+        }
 
         .adopt-form-container h2 {
             color: #644426;
-            margin-bottom: 15px;
+            margin-bottom: 30px;
             text-align: center;
+            font-size: 32px;
+            font-weight: 300;
+            position: relative;
         }
 
-    form label {
-        display: block;
-        margin: 10px 0 5px;
-        font-weight: bold;
-    }
+        .adopt-form-container h2::after {
+            content: '🐾';
+            display: block;
+            font-size: 20px;
+            margin-top: 8px;
+        }
 
-    form input, form textarea {
-        width: 100%;
-        padding: 8px;
-        border-radius: 6px;
-        border: 1px solid #ccc;
-    }
+        .form-group {
+            margin-bottom: 25px;
+            position: relative;
+        }
 
-    .submit-btn {
-        background-color: #d8a55b;
-        color: white;
-        border: none;
-        padding: 10px 20px;
-        border-radius: 20px;
-        font-size: 16px;
-        font-weight: bold;
-        cursor: pointer;
-        margin-top: 15px;
-        display: block;
-        width: 100%;
-    }
+        form label {
+            display: flex;
+            align-items: center;
+            margin: 0 0 8px;
+            font-weight: 600;
+            color: #644426;
+            font-size: 16px;
+        }
+
+        .icon {
+            margin-right: 8px;
+            font-size: 18px;
+        }
+
+        form input, form textarea {
+            width: 100%;
+            padding: 15px 20px;
+            border-radius: 12px;
+            border: 2px solid #e0d5c7;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            box-sizing: border-box;
+            background: #fefefe;
+        }
+
+        form input:focus, form textarea:focus {
+            outline: none;
+            border-color: #d8a55b;
+            box-shadow: 0 0 0 3px rgba(216, 165, 91, 0.1);
+            transform: translateY(-2px);
+        }
+
+        form input::placeholder, form textarea::placeholder {
+            color: #a69c8a;
+            font-style: italic;
+        }
+
+        form textarea {
+            resize: vertical;
+            min-height: 100px;
+            font-family: inherit;
+        }
+
+        .submit-btn {
+            background: linear-gradient(135deg, #d8a55b 0%, #f4c97b 50%, #d8a55b 100%);
+            color: white;
+            border: none;
+            padding: 18px 30px;
+            border-radius: 25px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 20px;
+            display: block;
+            width: 100%;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 20px rgba(216, 165, 91, 0.3);
+        }
+
+        .submit-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
 
         .submit-btn:hover {
-            background-color: #b8853f;
+            background: linear-gradient(135deg, #b8853f 0%, #d4a762 50%, #b8853f 100%);
+            transform: translateY(-3px);
+            box-shadow: 0 12px 25px rgba(216, 165, 91, 0.4);
         }
-</style>
+
+        .submit-btn:hover::before {
+            left: 100%;
+        }
+
+        .submit-btn:active {
+            transform: translateY(-1px);
+        }
+
+        .btn-text {
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Responsive design */
+        @@media (max-width: 768px) {
+            .navbar {
+                padding: 14px 20px;
+            }
+
+            .navbar .logo {
+                font-size: 24px;
+            }
+
+            .nav-links {
+                gap: 15px;
+            }
+
+            .nav-links a {
+                font-size: 14px;
+            }
+
+            .adopt-form-container {
+                margin: 100px 20px 40px;
+                padding: 30px 25px;
+            }
+
+            .adopt-form-container h2 {
+                font-size: 28px;
+            }
+
+            form input, form textarea {
+                padding: 12px 16px;
+            }
+
+            .submit-btn {
+                padding: 16px 25px;
+                font-size: 16px;
+            }
+        }
+
+        /* Add subtle animations */
+        .form-group {
+            animation: slideInUp 0.6s ease forwards;
+            opacity: 0;
+            transform: translateY(30px);
+        }
+
+        .form-group:nth-child(2) { animation-delay: 0.1s; }
+        .form-group:nth-child(3) { animation-delay: 0.2s; }
+        .form-group:nth-child(4) { animation-delay: 0.3s; }
+        .form-group:nth-child(5) { animation-delay: 0.4s; }
+        .submit-btn { animation-delay: 0.5s; }
+
+        @@keyframes slideInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .adopt-form-container {
+            animation: fadeInScale 0.8s ease forwards;
+            opacity: 0;
+            transform: scale(0.9);
+        }
+
+        @@keyframes fadeInScale {
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+    </style>
+</body>
+</html>

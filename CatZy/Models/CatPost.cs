@@ -1,4 +1,6 @@
-namespace CatZy.Models
+using System;
+
+namespace Catzy.Models
 {
     public class CatPost
     {
@@ -10,6 +12,8 @@ namespace CatZy.Models
         public string Breed { get; set; }
         public string Description { get; set; }
         public string ImageUrl { get; set; }
+        public string PostedBy { get; set; }
+        public DateTime PostedAt { get; set; }
+        public string Status { get; set; }    // Pending | Approved | Closed
     }
 }
-

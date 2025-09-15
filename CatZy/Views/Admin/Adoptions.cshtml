@@ -1,7 +1,9 @@
+@using Catzy.Models
 @model List<Catzy.Controllers.AdoptionRequest>
 @{
     ViewBag.Title = "Adoption Listings - Admin";
 }
+
 <nav class="navbar">
     <div class="logo">CatZy</div>
     <ul class="nav-links">
@@ -15,9 +17,7 @@
 <div class="page">
     <h1>Adoption Listings</h1>
     @if (TempData["Flash"] != null)
-    {
-        <div class="flash">@TempData["Flash"]</div>
-    }
+    {<div class="flash">@TempData["Flash"]</div>}
 
     <div class="toolbar">
         @using (Html.BeginForm("Adoptions", "Admin", FormMethod.Get, new { @class = "filters" }))
@@ -27,6 +27,7 @@
                 <option @(ViewBag.SelectedStatus == "All" ? "selected" : null)>All</option>
                 <option @(ViewBag.SelectedStatus == "Pending" ? "selected" : null)>Pending</option>
                 <option @(ViewBag.SelectedStatus == "Approved" ? "selected" : null)>Approved</option>
+                <option @(ViewBag.SelectedStatus == "Rejected" ? "selected" : null)>Rejected</option>
             </select>
             <input type="text" name="search" value="@ViewBag.Search" placeholder="Search name, cat, email" />
             <button type="submit" class="btn">Apply</button>
@@ -39,22 +40,10 @@
                 {
                     @Html.AntiForgeryToken()
                     <div class="grid">
-                        <div>
-                            <label>Cat Name</label>
-                            <input type="text" name="CatName" required />
-                        </div>
-                        <div>
-                            <label>Applicant</label>
-                            <input type="text" name="ApplicantName" required />
-                        </div>
-                        <div>
-                            <label>Email</label>
-                            <input type="email" name="Email" required />
-                        </div>
-                        <div>
-                            <label>Phone</label>
-                            <input type="text" name="Phone" required />
-                        </div>
+                        <div><label>Cat Name</label><input type="text" name="CatName" required /></div>
+                        <div><label>Applicant</label><input type="text" name="ApplicantName" required /></div>
+                        <div><label>Email</label><input type="email" name="Email" required /></div>
+                        <div><label>Phone</label><input type="text" name="Phone" required /></div>
                     </div>
                     <button type="submit" class="btn primary">Add</button>
                 }
@@ -72,17 +61,9 @@
                     <div><label>Name</label><input type="text" name="Name" required /></div>
                     <div>
                         <label>Age</label>
-                        <select name="Age" required>
-                            <option>6 months</option>
-                            <option>1 year</option>
-                            <option>2 years</option>
-                            <option>3 years</option>
-                        </select>
+                        <select name="Age" required><option>6 months</option><option>1 year</option><option>2 years</option><option>3 years</option></select>
                     </div>
-                    <div>
-                        <label>Gender</label>
-                        <select name="Gender" required><option>Male</option><option>Female</option></select>
-                    </div>
+                    <div><label>Gender</label><select name="Gender" required><option>Male</option><option>Female</option></select></div>
                     <div><label>Color</label><input type="text" name="Color" required /></div>
                     <div><label>Breed</label><input type="text" name="Breed" required /></div>
                     <div class="span2"><label>Description</label><textarea name="Description" rows="3" required></textarea></div>
@@ -97,15 +78,7 @@
     <div class="table-wrap">
         <table class="table">
             <thead>
-                <tr>
-                    <th>#</th>
-                    <th>Cat</th>
-                    <th>Applicant</th>
-                    <th>Contact</th>
-                    <th>Submitted</th>
-                    <th>Status</th>
-                    <th style="width:180px">Actions</th>
-                </tr>
+                <tr><th>#</th><th>Cat</th><th>Applicant</th><th>Contact</th><th>Submitted</th><th>Status</th><th style="width:240px">Actions</th></tr>
             </thead>
             <tbody>
                 @if (Model != null && Model.Any())
@@ -118,13 +91,19 @@
                             <td>@r.ApplicantName</td>
                             <td><div>@r.Email</div><div class="muted">@r.Phone</div></td>
                             <td>@r.SubmittedAt.ToLocalTime().ToString("dd MMM yyyy, HH:mm")</td>
-                            <td><span class="badge @(r.Status=="Approved"?"ok":"warn")">@r.Status</span></td>
+                            <td><span class="badge @(r.Status=="Approved"?"ok":(r.Status=="Rejected"?"danger":"warn"))">@r.Status</span></td>
                             <td class="actions">
                                 @using (Html.BeginForm("Approve", "Admin", FormMethod.Post, new { @class = "inline" }))
                                 {
                                     @Html.AntiForgeryToken()
                                     <input type="hidden" name="id" value="@r.Id" />
                                     <button type="submit" class="btn success" @(r.Status == "Approved" ? "disabled" : null)>Approve</button>
+                                }
+                                @using (Html.BeginForm("Reject", "Admin", FormMethod.Post, new { @class = "inline" }))
+                                {
+                                    @Html.AntiForgeryToken()
+                                    <input type="hidden" name="id" value="@r.Id" />
+                                    <button type="submit" class="btn warning" @(r.Status == "Rejected" ? "disabled" : null)>Reject</button>
                                 }
                                 @using (Html.BeginForm("Delete", "Admin", FormMethod.Post, new { @class = "inline", onsubmit = "return confirm('Delete request #@r.Id?');" }))
                                 {
@@ -146,10 +125,9 @@
 
     @if (ViewBag.CatPosts != null)
     {
-        var cats = (List<Catzy.Controllers.CatPost>)ViewBag.CatPosts;
-        <h2 class="section-title">Cat Adoption Listings</h2>
-        <p class="section-sub">Add cats for adoption and manage adoption requests</p>
-
+        var cats = (List<Catzy.Models.CatPost>)ViewBag.CatPosts;
+        <h2 class="section-title">Cat Adoption Listings (Moderation)</h2>
+        <p class="section-sub">Approve to make a post visible on the user adoption page</p>
         <div class="cards">
             @foreach (var c in cats)
             {
@@ -157,10 +135,21 @@
                     <img src="@Url.Content(c.ImageUrl)" alt="@c.Name" />
                     <h3>@c.Name</h3>
                     <p class="muted">@c.Breed • @c.Age • @c.Gender • @c.Color</p>
-                    <p class="desc">@c.Description</p>
+                    <p class="muted">Status: <span class="badge @(c.Status=="Approved"?"ok":(c.Status=="Pending"?"warn":(c.Status=="Closed"?"danger":"")))">@c.Status</span></p>
                     <div class="card-actions">
-                        <a href="#" class="btn">View Details</a>
-                        @using (Html.BeginForm("DeleteCat", "Admin", FormMethod.Post, new { @class = "inline", onsubmit = "return confirm('Remove @c.Name?');" }))
+                        @using (Html.BeginForm("ApprovePost", "Admin", FormMethod.Post, new { @class = "inline" }))
+                        {
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="id" value="@c.Id" />
+                            <button type="submit" class="btn success" @(c.Status == "Approved" ? "disabled" : null)>Approve</button>
+                        }
+                        @using (Html.BeginForm("ClosePost", "Admin", FormMethod.Post, new { @class = "inline" }))
+                        {
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="id" value="@c.Id" />
+                            <button type="submit" class="btn">Close</button>
+                        }
+                        @using (Html.BeginForm("DeleteCat", "Admin", FormMethod.Post, new { @class = "inline", onsubmit = $"return confirm('Remove {c.Name}?');" }))
                         {
                             @Html.AntiForgeryToken()
                             <input type="hidden" name="id" value="@c.Id" />
@@ -174,86 +163,344 @@
 </div>
 
 <script>
-(function(){
-  var input = document.getElementById('catImageInput');
-  var img = document.getElementById('catPreview');
-  if (input && img) {
-    input.addEventListener('change', function(){
-      if (this.files && this.files) {
-        var url = URL.createObjectURL(this.files); // preview without upload
-        img.src = url; // [6]
-      }
-    });
-  }
-})();
+    (function () {
+        var input = document.getElementById('catImageInput');
+        var img = document.getElementById('catPreview');
+        if (input && img) {
+            input.addEventListener('change', function () {
+                if (this.files && this.files[0]) {
+                    img.src = URL.createObjectURL(this.files[0]);
+                }
+            });
+        }
+    })();
 </script>
 
 <style>
-body{margin:0;background:#ffd699;font-family:'Segoe UI',Tahoma,Verdana,sans-serif}
-.navbar{position:fixed;top:0;left:0;right:0;background:#644426;color:#fff;display:flex;justify-content:space-between;align-items:center;padding:12px 28px;z-index:10}
-.navbar .logo{font-size:22px;font-weight:800}
-.nav-links{list-style:none;display:flex;gap:22px;margin:0;padding:0}
-.nav-links a{color:#fff;text-decoration:none;font-weight:700}
-.nav-links .active{text-decoration:underline}
+    body {
+        margin: 0;
+        background: #ffd699;
+        font-family: 'Segoe UI',Tahoma,Verdana,sans-serif;
+    }
 
-.page{margin-top:84px;padding:24px}
-.page h1{color:#6b4b2e;margin:0 0 8px}
-.flash{background:#fff1c1;border:1px solid #f0d7aa;color:#5b4636;border-radius:10px;padding:10px 14px;display:inline-block;margin:10px 0}
+    .navbar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        background: #644426;
+        color: #fff;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 12px 28px;
+        z-index: 10;
+    }
+        .navbar .logo {
+            font-size: 22px;
+            font-weight: 800;
+        }
 
-.toolbar{display:flex;flex-wrap:wrap;gap:12px;align-items:flex-end;justify-content:space-between;margin:12px 0 8px}
-.filters{display:flex;gap:8px;align-items:center}
-.filters label{font-weight:700;color:#6b4b2e}
-.filters select,.filters input{padding:8px 10px;border:2px solid #e5c185;border-radius:8px;background:#fff}
+    .nav-links {
+        list-style: none;
+        display: flex;
+        gap: 22px;
+        margin: 0;
+        padding: 0;
+    }
+        .nav-links a {
+            color: #fff;
+            text-decoration: none;
+            font-weight: 700;
+        }
+        .nav-links .active {
+            text-decoration: underline;
+        }
 
-.add-box{border:1px dashed #d8a55b;border-radius:10px;padding:8px 12px}
-.add-box > summary{list-style:none;cursor:pointer}
-.add-body{margin-top:10px}
-.add-body .grid{display:grid;grid-template-columns:repeat(2,minmax(180px,1fr));gap:10px}
-.add-body label{display:block;font-weight:700;color:#6b4b2e;margin-bottom:4px}
-.add-body input{width:100%;padding:8px 10px;border:2px solid #e5c185;border-radius:8px}
+    .page {
+        margin-top: 84px;
+        padding: 24px;
+    }
+        .page h1 {
+            color: #6b4b2e;
+            margin: 0 0 8px;
+        }
 
-.table-wrap{overflow:auto;background:#fff3e0;border:1px solid #f0d7aa;border-radius:12px;margin-top:8px}
-.table{width:100%;border-collapse:separate;border-spacing:0}
-.table thead th{position:sticky;top:0;background:#ffe7c2;color:#6b4b2e;text-align:left;padding:10px}
-.table td{padding:10px;color:#5b4636;border-top:1px solid #f0d7aa;vertical-align:middle}
-.table .muted{color:#8a5e3c;font-size:12px}
-.table .empty{text-align:center;padding:24px;color:#8a5e3c}
+    .flash {
+        background: #fff1c1;
+        border: 1px solid #f0d7aa;
+        color: #5b4636;
+        border-radius: 10px;
+        padding: 10px 14px;
+        display: inline-block;
+        margin: 10px 0;
+    }
 
-.badge{padding:4px 10px;border-radius:999px;font-weight:800;font-size:12px}
-.badge.ok{background:#d2f6d7;color:#1f7a2f}
-.badge.warn{background:#ffe6b3;color:#8a5e3c}
+    .toolbar {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        align-items: flex-end;
+        justify-content: space-between;
+        margin: 12px 0 8px;
+    }
 
-.actions{display:flex;gap:8px}
-.inline{display:inline}
-.btn{background:#e5c185;color:#6b4b2e;border:none;border-radius:18px;padding:8px 12px;font-weight:800;cursor:pointer;text-decoration:none}
-.btn:hover{background:#dab078}
-.btn.primary{background:#d8a55b;color:#fff}
-.btn.success{background:#65b46b;color:#fff}
-.btn.success[disabled]{opacity:.6;cursor:not-allowed}
-.btn.danger{background:#d66969;color:#fff}
+    .filters {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+    }
+        .filters label {
+            font-weight: 700;
+            color: #6b4b2e;
+        }
+        .filters select, .filters input {
+            padding: 8px 10px;
+            border: 2px solid #e5c185;
+            border-radius: 8px;
+            background: #fff;
+        }
 
-/* Add Cat form + preview */
-.add-cat{border:1px dashed #d8a55b;border-radius:10px;padding:8px 12px;margin:10px 0}
-.add-cat > summary{list-style:none;cursor:pointer}
-.add-cat .add-body .grid{display:grid;grid-template-columns:repeat(2,minmax(220px,1fr));gap:10px}
-.add-cat .add-body .grid .span2{grid-column:1/-1}
-.add-cat .add-body select,
-.add-cat .add-body input[type="text"],
-.add-cat .add-body textarea{width:100%;padding:8px 10px;border:2px solid #e5c185;border-radius:8px;background:#fff}
-.preview-cell{display:flex;flex-direction:column}
-#catPreview{width:100%;max-height:180px;object-fit:cover;border-radius:8px;border:1px solid #f0d7aa;background:#fff}
+    .add-box {
+        border: 1px dashed #d8a55b;
+        border-radius: 10px;
+        padding: 8px 12px;
+    }
+        .add-box > summary {
+            list-style: none;
+            cursor: pointer;
+        }
 
-/* Cards grid for posted cats */
-.section-title{color:#6b4b2e;margin:18px 0 0}
-.section-sub{color:#8a5e3c;margin:6px 0 12px}
-.cards{display:grid;grid-template-columns:repeat(3,minmax(240px,1fr));gap:18px;margin-top:14px}
-.card{background:#fff1c1;border-radius:12px;padding:12px;border:1px solid #f0d7aa;box-shadow:0 4px 12px rgba(0,0,0,.06)}
-.card img{width:100%;height:160px;object-fit:cover;border-radius:10px;margin-bottom:8px}
-.card h3{margin:4px 0 4px;color:#6b4b2e}
-.card .muted{color:#8a5e3c;font-size:12px;margin:0 0 6px}
-.card .desc{color:#5b4636;font-size:14px;margin:0 0 10px}
-.card-actions{display:flex;gap:8px}
+    .add-body {
+        margin-top: 10px;
+    }
+        .add-body .grid {
+            display: grid;
+            grid-template-columns: repeat(2,minmax(180px,1fr));
+            gap: 10px;
+        }
+        .add-body label {
+            display: block;
+            font-weight: 700;
+            color: #6b4b2e;
+            margin-bottom: 4px;
+        }
+        .add-body input {
+            width: 100%;
+            padding: 8px 10px;
+            border: 2px solid #e5c185;
+            border-radius: 8px;
+        }
 
-@@media (max-width: 992px){ .cards{grid-template-columns:repeat(2,minmax(220px,1fr))} }
-@@media (max-width: 600px){ .cards{grid-template-columns:1fr} }
+    .table-wrap {
+        overflow: auto;
+        background: #fff3e0;
+        border: 1px solid #f0d7aa;
+        border-radius: 12px;
+        margin-top: 8px;
+    }
+
+    .table {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0;
+    }
+        .table thead th {
+            position: sticky;
+            top: 0;
+            background: #ffe7c2;
+            color: #6b4b2e;
+            text-align: left;
+            padding: 10px;
+        }
+        .table td {
+            padding: 10px;
+            color: #5b4636;
+            border-top: 1px solid #f0d7aa;
+            vertical-align: middle;
+        }
+        .table .muted {
+            color: #8a5e3c;
+            font-size: 12px;
+        }
+        .table .empty {
+            text-align: center;
+            padding: 24px;
+            color: #8a5e3c;
+        }
+
+    .badge {
+        padding: 4px 10px;
+        border-radius: 999px;
+        font-weight: 800;
+        font-size: 12px;
+    }
+        .badge.ok {
+            background: #d2f6d7;
+            color: #1f7a2f;
+        }
+        .badge.warn {
+            background: #ffe6b3;
+            color: #8a5e3c;
+        }
+        .badge.danger {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+    .actions {
+        display: flex;
+        gap: 6px;
+        flex-wrap: wrap;
+    }
+
+    .inline {
+        display: inline;
+    }
+
+    .btn {
+        background: #e5c185;
+        color: #6b4b2e;
+        border: none;
+        border-radius: 18px;
+        padding: 8px 12px;
+        font-weight: 800;
+        cursor: pointer;
+        text-decoration: none;
+        font-size: 13px;
+    }
+        .btn:hover {
+            background: #dab078;
+        }
+        .btn.primary {
+            background: #d8a55b;
+            color: #fff;
+        }
+        .btn.success {
+            background: #65b46b;
+            color: #fff;
+        }
+            .btn.success[disabled] {
+                opacity: .6;
+                cursor: not-allowed;
+            }
+        .btn.warning {
+            background: #ffc107;
+            color: #212529;
+        }
+            .btn.warning[disabled] {
+                opacity: .6;
+                cursor: not-allowed;
+            }
+        .btn.danger {
+            background: #d66969;
+            color: #fff;
+        }
+
+    /* Add Cat form + preview */
+    .add-cat {
+        border: 1px dashed #d8a55b;
+        border-radius: 10px;
+        padding: 8px 12px;
+        margin: 10px 0;
+    }
+        .add-cat > summary {
+            list-style: none;
+            cursor: pointer;
+        }
+        .add-cat .add-body .grid {
+            display: grid;
+            grid-template-columns: repeat(2,minmax(220px,1fr));
+            gap: 10px;
+        }
+            .add-cat .add-body .grid .span2 {
+                grid-column: 1/-1;
+            }
+        .add-cat .add-body select,
+        .add-cat .add-body input[type="text"],
+        .add-cat .add-body textarea {
+            width: 100%;
+            padding: 8px 10px;
+            border: 2px solid #e5c185;
+            border-radius: 8px;
+            background: #fff;
+        }
+
+    .preview-cell {
+        display: flex;
+        flex-direction: column;
+    }
+
+    #catPreview {
+        width: 100%;
+        max-height: 180px;
+        object-fit: cover;
+        border-radius: 8px;
+        border: 1px solid #f0d7aa;
+        background: #fff;
+    }
+
+    /* Cards grid for posted cats */
+    .section-title {
+        color: #6b4b2e;
+        margin: 18px 0 0;
+    }
+
+    .section-sub {
+        color: #8a5e3c;
+        margin: 6px 0 12px;
+    }
+
+    .cards {
+        display: grid;
+        grid-template-columns: repeat(3,minmax(240px,1fr));
+        gap: 18px;
+        margin-top: 14px;
+    }
+
+    .card {
+        background: #fff1c1;
+        border-radius: 12px;
+        padding: 12px;
+        border: 1px solid #f0d7aa;
+        box-shadow: 0 4px 12px rgba(0,0,0,.06);
+    }
+        .card img {
+            width: 100%;
+            height: 160px;
+            object-fit: cover;
+            border-radius: 10px;
+            margin-bottom: 8px;
+        }
+        .card h3 {
+            margin: 4px 0 4px;
+            color: #6b4b2e;
+        }
+        .card .muted {
+            color: #8a5e3c;
+            font-size: 12px;
+            margin: 0 0 6px;
+        }
+
+    .card-actions {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+    }
+
+    @@media (max-width: 992px) {
+        .cards {
+            grid-template-columns: repeat(2,minmax(220px,1fr));
+        }
+    }
+
+    @@media (max-width: 600px) {
+        .cards {
+            grid-template-columns: 1fr;
+        }
+        .actions {
+            flex-direction: column;
+            gap: 4px;
+        }
+    }
 </style>
