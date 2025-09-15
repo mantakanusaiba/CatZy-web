@@ -7,8 +7,6 @@
     <div class="logo">CatZy</div>
     <ul class="nav-links">
         <li><a href="@Url.Action("Index", "Shop")" class="active">Products</a></li>
-        <li><a href="#">Adoption</a></li>
-        <li><a href="#">Doctors</a></li>
         <li><a href="@Url.Action("Index", "User")" class="btn-back">Back</a></li>
     </ul>
 </nav>
@@ -26,12 +24,12 @@
         </ul>
     </aside>
 
-    <!-- Content Section -->
+
     <main class="content">
         <h1>@(ViewBag.SelectedCategory ?? "All Products")</h1>
         <p>Showing @Model.Count() products</p>
 
-        <!-- Product Grid -->
+
         <div class="product-grid">
             @foreach (var item in Model)
             {
@@ -41,12 +39,25 @@
                     <p>@item.Description</p>
                     <h4>Tk @item.Price</h4>
                     <div class="card-buttons">
+
+
+                        @using (Html.BeginForm("AddToCart", "Shop", new { productId = item.Id }, FormMethod.Post))
+                        {
+                            @Html.AntiForgeryToken()
+                            @Html.Hidden("quantity", 1)
+                            <button type="submit" class="btn">🛒 Add to Cart</button>
+                        }
+
+
+
                         <a href="@Url.Action("Details", "Shop", new { id = item.Id })" class="btn">
-                            View Details</a>
+                            View Details
+                        </a>
                     </div>
                 </div>
             }
         </div>
+
     </main>
 </div>
 
@@ -179,7 +190,7 @@
         transition: transform 0.2s;
         flex-direction: column;
         justify-content: space-between;
-        height: 320px;
+        height: 350px;
     }
 
         .product-card:hover {
@@ -213,10 +224,11 @@
             margin-bottom: 20px;
         }
 
+
     .card-buttons {
         display: flex;
         flex-direction: column;
-        gap: 10px;
+        gap: 8px;
     }
 
     .btn {
@@ -227,10 +239,36 @@
         color: #6b4b2e;
         font-weight: bold;
         font-size: 14px;
-        transition: background-color 0.2s;
+        transition: all 0.2s ease;
+        text-align: center;
+        cursor: pointer;
+        border: none;
+        width: 100%;
     }
 
+
         .btn:hover {
+            background-color: #dab078;
+        }
+
+
+    .btn-cart {
+        background-color: #6b4b2e;
+        color: #fff1c1;
+    }
+
+        .btn-cart:hover {
+            background-color: #4a3220;
+            color: #fff;
+        }
+
+
+    .btn-details {
+        background-color: #e5c185;
+        color: #6b4b2e;
+    }
+
+        .btn-details:hover {
             background-color: #dab078;
         }
 </style>

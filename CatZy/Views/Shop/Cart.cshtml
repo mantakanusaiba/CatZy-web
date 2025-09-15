@@ -1,8 +1,14 @@
 @model List<Catzy.Models.CartItem>
 @{
     ViewData["Title"] = "Shopping Cart";
-    var subtotal = Model.Sum(i => i.Product.Price * i.Quantity);
+    var subtotal = Model.Sum(i => i.UnitPrice * i.Quantity);
 }
+
+@using (Html.BeginForm("", "", FormMethod.Post, new { id = "__AjaxAntiForgeryForm" }))
+{
+    @Html.AntiForgeryToken()
+}
+
 <div class="cart-container">
     <div class="cart-header">
         <h2>Your Shopping Cart</h2>
@@ -46,24 +52,24 @@
                     {
                         <tr class="cart-item">
                             <td class="product-info">
-                                <a href="@Url.Action("Details","Shop", new { id = item.Product.Id })" class="product-link">
-                                    @item.Product.Name
+                                <a href="@Url.Action("Details","Shop", new { id = item.ProductId })" class="product-link">
+                                    @item.Name
                                 </a>
                             </td>
-                            <td class="price">Tk @item.Product.Price</td>
+                            <td class="price">Tk @item.UnitPrice</td>
                             <td class="quantity">
                                 <div class="quantity-container">
                                     <div class="quantity-controls">
-                                        <button type="button" class="qty-btn minus" data-id="@item.Product.Id">-</button>
-                                        <input type="number" name="quantity" value="@item.Quantity" min="1" class="qty-input" data-id="@item.Product.Id" />
-                                        <button type="button" class="qty-btn plus" data-id="@item.Product.Id">+</button>
+                                        <button type="button" class="qty-btn minus" data-id="@item.ProductId">-</button>
+                                        <input type="number" name="quantity" value="@item.Quantity" min="1" class="qty-input" data-id="@item.ProductId" />
+                                        <button type="button" class="qty-btn plus" data-id="@item.ProductId">+</button>
                                     </div>
-                                    <button type="button" class="update-btn" data-id="@item.Product.Id">Update</button>
+                                    <button type="button" class="update-btn" data-id="@item.ProductId">Update</button>
                                 </div>
                             </td>
-                            <td class="total">Tk @(item.Product.Price * item.Quantity)</td>
+                            <td class="total">Tk @(item.UnitPrice * item.Quantity)</td>
                             <td class="actions">
-                                <button type="button" class="remove-btn" data-id="@item.Product.Id">
+                                <button type="button" class="remove-btn" data-id="@item.ProductId">
                                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#6b4b2e">
                                         <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z" />
                                     </svg>
@@ -80,40 +86,113 @@
                 <span>Subtotal:</span>
                 <span class="amount">Tk @subtotal</span>
             </div>
-            <div class="summary-row">
-                <span>Shipping:</span>
-                <span class="amount">Calculated at checkout</span>
-            </div>
             <div class="summary-row total-row">
                 <span>Estimated Total:</span>
                 <span class="amount">Tk @subtotal</span>
             </div>
             <div class="cart-actions">
-                <a href="@Url.Action("Index","Shop")" class="back-btn">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#6b4b2e">
-                        <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z" />
-                    </svg>
-                    Continue Shopping
-                </a>
-                <a href="@Url.Action("Checkout","Shop")" class="btn checkout-btn">
-                    Proceed to Checkout
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#6b4b2e">
-                        <path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z" />
-                    </svg>
-                </a>
+                <a href="@Url.Action("Index","Shop")" class="back-btn">Continue Shopping</a>
+                <a href="@Url.Action("Checkout","Shop")" class="btn checkout-btn">Proceed to Checkout</a>
             </div>
         </div>
     }
 </div>
 
+<script>
+
+    document.addEventListener('click', function (e) {
+        // increment
+        const plus = e.target.closest('.qty-btn.plus');
+        if (plus) {
+            const row = plus.closest('tr');
+            const input = row ? row.querySelector('.qty-input') : null;  // find the input in the same row
+            if (input) {
+                const max = parseInt(input.getAttribute('max') || '0', 10);
+                const current = parseInt(input.value || '0', 10) || 0;
+                const next = max > 0 ? Math.min(current + 1, max) : current + 1;
+                input.value = next;
+            }
+            return;
+        }
+
+        // decrement
+        const minus = e.target.closest('.qty-btn.minus');
+        if (minus) {
+            const row = minus.closest('tr');
+            const input = row ? row.querySelector('.qty-input') : null;
+            if (input) {
+                const current = parseInt(input.value || '1', 10) || 1;
+                const next = Math.max(current - 1, 1);
+                input.value = next;
+            }
+            return;
+        }
+    });
+
+    // Update quantity
+    document.querySelectorAll('.update-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const id = btn.getAttribute('data-id');
+            const qty = document.querySelector(`.qty-input[data-id="${id}"]`)?.value || "1";
+            const token = document.querySelector('#__AjaxAntiForgeryForm input[name="__RequestVerificationToken"]')?.value || "";
+
+            const fd = new FormData();
+            fd.append('productId', id);                 // names must match action params
+            fd.append('quantity', qty);                 // names must match action params
+            fd.append('__RequestVerificationToken', token);  // MVC 5 expects this field
+
+            fetch('/Shop/UpdateCart', {
+                method: 'POST',
+                credentials: 'same-origin',               // send anti-forgery cookie
+                body: fd                                  // token included in body
+            })
+                .then(r => { if (r.ok) location.reload(); else alert('Error updating cart.'); })
+                .catch(() => alert('Error updating cart.'));
+        });
+    });
+
+    // Remove item
+    document.querySelectorAll('.remove-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            if (!confirm('Remove this item from your cart?')) return;
+
+            const id = btn.getAttribute('data-id');
+            const token = document.querySelector('#__AjaxAntiForgeryForm input[name="__RequestVerificationToken"]')?.value || "";
+
+            const fd = new FormData();
+            fd.append('productId', id);
+            fd.append('__RequestVerificationToken', token);
+
+            fetch('/Shop/RemoveFromCart', {
+                method: 'POST',
+                credentials: 'same-origin',
+                body: fd
+            })
+                .then(r => { if (r.ok) location.reload(); else alert('Error removing item.'); })
+                .catch(() => alert('Error removing item.'));
+        });
+    });
+
+</script>
+
+
+
 <style>
-    /* Base styles */
+
+    body {
+        background-color: #ffffff;
+        font-family: 'Comic Sans MS', cursive, sans-serif;
+        margin: 0;
+        padding: 0;
+        min-height: 100vh;
+    }
     .cart-container {
         padding: 40px 20px;
         max-width: 1000px;
         margin: 40px auto;
         background: #ffffff;
         border-radius: 20px;
+        border: 2px solid #e5c185;
         box-shadow: 0 8px 25px rgba(0,0,0,0.1);
         overflow: hidden;
     }
@@ -127,11 +206,11 @@
         border-bottom: 1px solid #f0e6d2;
     }
 
-    .cart-header h2 {
-        color: #6b4b2e;
-        font-size: 28px;
-        font-weight: 700;
-    }
+        .cart-header h2 {
+            color: #6b4b2e;
+            font-size: 28px;
+            font-weight: 700;
+        }
 
     .cart-icon {
         position: relative;
@@ -182,10 +261,10 @@
         gap: 10px;
     }
 
-    .shop-btn svg {
-        width: 20px;
-        height: 20px;
-    }
+        .shop-btn svg {
+            width: 20px;
+            height: 20px;
+        }
 
     /* Cart table */
     .cart-items {
@@ -197,22 +276,22 @@
         border-collapse: collapse;
     }
 
-    .cart-table th {
-        text-align: left;
-        padding: 15px 10px;
-        color: #6b4b2e;
-        font-weight: 600;
-        border-bottom: 2px solid #f0e6d2;
-    }
+        .cart-table th {
+            text-align: left;
+            padding: 15px 10px;
+            color: #6b4b2e;
+            font-weight: 600;
+            border-bottom: 2px solid #f0e6d2;
+        }
 
     .cart-item {
         border-bottom: 1px solid #f0e6d2;
         transition: background-color 0.2s;
     }
 
-    .cart-item:hover {
-        background-color: #fff9eb;
-    }
+        .cart-item:hover {
+            background-color: #fff9eb;
+        }
 
     .cart-table td {
         padding: 20px 10px;
@@ -227,9 +306,9 @@
         transition: color 0.2s;
     }
 
-    .product-link:hover {
-        color: #e5c185;
-    }
+        .product-link:hover {
+            color: #e5c185;
+        }
 
     .price, .total {
         font-weight: 500;
@@ -263,9 +342,9 @@
         transition: all 0.2s ease;
     }
 
-    .qty-btn:hover {
-        background-color: #e5c185;
-    }
+        .qty-btn:hover {
+            background-color: #e5c185;
+        }
 
     .qty-input {
         width: 50px;
@@ -289,9 +368,9 @@
         width: 80px;
     }
 
-    .update-btn:hover {
-        background: #d4aa6a;
-    }
+        .update-btn:hover {
+            background: #d4aa6a;
+        }
 
     .remove-btn {
         background: transparent;
@@ -307,20 +386,21 @@
         height: 36px;
     }
 
-    .remove-btn:hover {
-        background: rgba(244, 67, 54, 0.1);
-    }
+        .remove-btn:hover {
+            background: rgba(244, 67, 54, 0.1);
+        }
 
-    .remove-btn svg {
-        width: 20px;
-        height: 20px;
-    }
+        .remove-btn svg {
+            width: 20px;
+            height: 20px;
+        }
 
     /* Cart summary */
     .cart-summary {
         background: #fff9eb;
         padding: 25px 30px;
         border-top: 1px solid #f0e6d2;
+
     }
 
     .summary-row {
@@ -365,11 +445,11 @@
         box-shadow: 0 4px 8px rgba(229, 193, 133, 0.3);
     }
 
-    .btn:hover {
-        background-color: #d4aa6a;
-        transform: translateY(-2px);
-        box-shadow: 0 6px 12px rgba(229, 193, 133, 0.4);
-    }
+        .btn:hover {
+            background-color: #d4aa6a;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(229, 193, 133, 0.4);
+        }
 
     .back-btn {
         text-decoration: none;
@@ -385,150 +465,56 @@
         gap: 8px;
     }
 
-    .back-btn:hover {
-        background-color: #fff1c1;
-        transform: translateY(-2px);
-    }
+        .back-btn:hover {
+            background-color: #fff1c1;
+            transform: translateY(-2px);
+        }
 
-    .back-btn svg {
-        width: 18px;
-        height: 18px;
-    }
+        .back-btn svg {
+            width: 18px;
+            height: 18px;
+        }
 
     .checkout-btn svg {
         width: 18px;
         height: 18px;
     }
 
-   
 
-        .cart-header {
-            padding: 0 10px 15px;
-        }
+
+    .cart-header {
+        padding: 0 10px 15px;
+    }
 
         .cart-header h2 {
             font-size: 24px;
         }
 
-        .cart-items {
-            padding: 10px;
-        }
+    .cart-items {
+        padding: 10px;
+    }
 
-        .cart-table {
-            font-size: 14px;
-        }
+    .cart-table {
+        font-size: 14px;
+    }
 
         .cart-table th, .cart-table td {
             padding: 10px 5px;
         }
 
-        .cart-summary {
-            padding: 20px 15px;
-        }
+    .cart-summary {
+        padding: 20px 15px;
+    }
 
-        .cart-actions {
-            flex-direction: column;
-            gap: 15px;
-        }
+    .cart-actions {
+        flex-direction: column;
+        gap: 15px;
+    }
 
-        .btn, .back-btn {
-            width: 100%;
-            justify-content: center;
-        }
+    .btn, .back-btn {
+        width: 100%;
+        justify-content: center;
+    }
     }
 </style>
 
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        // Quantity controls functionality
-        const minusButtons = document.querySelectorAll('.qty-btn.minus');
-        const plusButtons = document.querySelectorAll('.qty-btn.plus');
-        const updateButtons = document.querySelectorAll('.update-btn');
-        const removeButtons = document.querySelectorAll('.remove-btn');
-
-        // Handle minus button clicks
-        minusButtons.forEach(button => {
-            button.addEventListener('click', function () {
-                const productId = this.getAttribute('data-id');
-                const input = document.querySelector(`.qty-input[data-id="${productId}"]`);
-                let currentValue = parseInt(input.value);
-                if (currentValue > 1) {
-                    input.value = currentValue - 1;
-                }
-            });
-        });
-
-        // Handle plus button clicks
-        plusButtons.forEach(button => {
-            button.addEventListener('click', function () {
-                const productId = this.getAttribute('data-id');
-                const input = document.querySelector(`.qty-input[data-id="${productId}"]`);
-                let currentValue = parseInt(input.value);
-                input.value = currentValue + 1;
-            });
-        });
-
-        // Handle update button clicks
-        updateButtons.forEach(button => {
-            button.addEventListener('click', function () {
-                const productId = this.getAttribute('data-id');
-                const input = document.querySelector(`.qty-input[data-id="${productId}"]`);
-                const quantity = input.value;
-
-               
-                const formData = new FormData();
-                formData.append('productId', productId);
-                formData.append('quantity', quantity);
-
-               
-                fetch('/Shop/UpdateCart', {
-                    method: 'POST',
-                    body: formData
-                })
-                    .then(response => {
-                        if (response.ok) {
-                            
-                            window.location.reload();
-                        } else {
-                            alert('Error updating cart. Please try again.');
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Error:', error);
-                        alert('Error updating cart. Please try again.');
-                    });
-            });
-        });
-
-        // Handle remove button clicks
-        removeButtons.forEach(button => {
-            button.addEventListener('click', function () {
-                if (confirm('Are you sure you want to remove this item from your cart?')) {
-                    const productId = this.getAttribute('data-id');
-
-                   
-                    const formData = new FormData();
-                    formData.append('productId', productId);
-
-                    
-                    fetch('/Shop/RemoveFromCart', {
-                        method: 'POST',
-                        body: formData
-                    })
-                        .then(response => {
-                            if (response.ok) {
-                                
-                                window.location.reload();
-                            } else {
-                                alert('Error removing item. Please try again.');
-                            }
-                        })
-                        .catch(error => {
-                            console.error('Error:', error);
-                            alert('Error removing item. Please try again.');
-                        });
-                }
-            });
-        });
-    });
-</script>
